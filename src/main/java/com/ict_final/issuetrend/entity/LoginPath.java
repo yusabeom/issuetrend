@@ -1,4 +1,5 @@
 package com.ict_final.issuetrend.entity;
 
-public class Keywords {
+public enum LoginPath {
+    COMMON, KAKAO
 }
