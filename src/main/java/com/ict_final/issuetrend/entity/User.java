@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -55,6 +57,13 @@ public class User {
     @Builder.Default
     @Column(name = "login_path", length = 20)
     private LoginPath loginPath = LoginPath.COMMON;
+
+    private String accessToken; // 카카오 로그인 시 발급받는 accessToken을 저장 -> 로그아웃 때 필요
+
+    @Column(length = 400)
+    private String refreshToken; // 리프레시 토큰의 값.
+
+    private Date refreshTokenExpiryDate; // 리프레시 토큰의 만료일.
 
 
 }
