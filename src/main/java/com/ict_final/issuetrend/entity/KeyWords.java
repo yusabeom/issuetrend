@@ -16,6 +16,7 @@ import lombok.*;
 public class KeyWords {
 
     //기사 코드
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_code")
     private Article article;
