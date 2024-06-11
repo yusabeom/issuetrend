@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @ToString
@@ -21,8 +22,8 @@ public class User {
     //회원번호
     @Id
     @Column(name = "user_no")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String userNo;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userNo;
 
     //프로필 사진
     @Column(name = "profile_image", length = 1000)
@@ -65,5 +66,16 @@ public class User {
 
     private Date refreshTokenExpiryDate; // 리프레시 토큰의 만료일.
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<ArticleComments> articleComments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<BoardPost> boardPosts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<PostComments> postComments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<LocalChat> localChats;
 
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @ToString
@@ -19,8 +20,8 @@ public class Article {
     //기사코드
     @Id
     @Column(name = "article_code")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String articleCode;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long articleCode;
 
     //제목
     @Column(length = 500)
@@ -51,4 +52,14 @@ public class Article {
     //기사링크
     @Column(name = "article_rink",length = 2500)
     private String articleRink;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<ArticleComments> articleComments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<PostComments> postComments;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<KeyWords> keyWords;
+
 }

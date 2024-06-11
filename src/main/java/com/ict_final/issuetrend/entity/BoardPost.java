@@ -21,8 +21,8 @@ public class BoardPost {
     //게시글번호
     @Id
     @Column(name = "post_no")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String postNo;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postNo;
 
     //회원 번호
     @ManyToOne(fetch = FetchType.LAZY)

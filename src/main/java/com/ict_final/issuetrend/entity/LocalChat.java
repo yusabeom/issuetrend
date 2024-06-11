@@ -20,8 +20,8 @@ public class LocalChat {
     //지역별 채팅방 코드
     @Id
     @Column(name = "area_code")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String areaCode;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long areaCode;
 
     //회원 번호
     @ManyToOne(fetch = FetchType.LAZY)
