@@ -50,14 +50,14 @@ public class Article {
     private String img;
 
     //기사링크
-    @Column(name = "article_rink",length = 2500)
-    private String articleRink;
+    @Column(name = "article_Link",length = 2500)
+    private String articleLink;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<ArticleComments> articleComments;
 
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
-    private List<KeyWords> keyWords;
+    private List<KeyWords> keywords;
 
 }
