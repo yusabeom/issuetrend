@@ -53,13 +53,11 @@ public class Article {
     @Column(name = "article_rink",length = 2500)
     private String articleRink;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<ArticleComments> articleComments;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<PostComments> postComments;
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<KeyWords> keyWords;
 
 }

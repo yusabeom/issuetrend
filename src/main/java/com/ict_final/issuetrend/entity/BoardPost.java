@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -41,4 +42,7 @@ public class BoardPost {
     //사진
     @Column(length = 2500)
     private String img;
+
+    @OneToMany(mappedBy = "boardPost", cascade = CascadeType.REMOVE)
+    private List<PostComments> postComments;
 }
