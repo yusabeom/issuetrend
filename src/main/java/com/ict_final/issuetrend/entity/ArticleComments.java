@@ -17,8 +17,8 @@ public class ArticleComments {
     //댓글 번호
     @Id
     @Column(name = "comment_no")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String commentNo;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long commentNo;
 
     //회원 번호
     @ManyToOne(fetch = FetchType.LAZY)

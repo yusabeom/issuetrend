@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -21,8 +22,8 @@ public class BoardPost {
     //게시글번호
     @Id
     @Column(name = "post_no")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String postNo;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postNo;
 
     //회원 번호
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,4 +42,7 @@ public class BoardPost {
     //사진
     @Column(length = 2500)
     private String img;
+
+    @OneToMany(mappedBy = "boardPost", cascade = CascadeType.REMOVE)
+    private List<PostComments> postComments;
 }
