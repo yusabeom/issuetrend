@@ -17,17 +17,19 @@ import java.io.IOException;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/issueTrend")
+@RequestMapping("/issue-trend")
 public class UserController {
     private final UserService userService;
     // 이메일 중복 확인 요청 처리
     @GetMapping("/check")
     public ResponseEntity<?> check(String email) {
+        log.info("Received email check request for: {}", email);
         if (email.trim().isEmpty()) {
             return ResponseEntity.badRequest()
                     .body("이메일이 존재하지 않습니다.");
         }
         boolean resultFlag = userService.isDuplicate(email);
+        log.info("Email duplication check result: {}", resultFlag);
         return ResponseEntity.ok().body(resultFlag);
     }
 
@@ -55,6 +57,7 @@ public class UserController {
         }
     }
 
+    // BindingResult 에서 유효성 검사 오류가 있는지 확인
     private static ResponseEntity<FieldError> getFieldErrorResponseEntity(BindingResult result) {
         if (result.hasErrors()) {
             log.warn(result.toString());
