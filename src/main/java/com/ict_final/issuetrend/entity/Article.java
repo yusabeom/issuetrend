@@ -20,8 +20,7 @@ public class Article {
     //기사코드
     @Id
     @Column(name = "article_code")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long articleCode;
+    private String articleCode;
 
     //제목
     @Column(length = 500)
@@ -40,10 +39,9 @@ public class Article {
     @Column(name = "news_agency", length = 50)
     private String newsAgency;
 
-    //회원 번호
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_no")
-    private User user;
+    //기자 이름
+    @JoinColumn(name = "writer")
+    private String writer;
 
     //사진
     @Column(length = 2500)
