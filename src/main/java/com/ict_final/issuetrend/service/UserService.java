@@ -1,6 +1,8 @@
 package com.ict_final.issuetrend.service;
 
+import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
+import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.UserRepository;
@@ -36,10 +38,10 @@ public class UserService {
         File rootDir = new File(uploadRootPath);
         if (!rootDir.exists()) rootDir.mkdirs();
         // 파일명을 유니크하게 변경 (이름 충돌 가능성을 대비)
-        // UUID와 원본파일명을 결합 -> 규칙은 없어요.
+        // UUID와 원본파일명을 결합
         String uniqueFileName
                 = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
-        // 파일을 저장
+        // 파일 저장
         File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
         profileImage.transferTo(uploadFile);
         return uniqueFileName;
@@ -58,5 +60,20 @@ public class UserService {
         User saved = userRepository.save(dto.toEntity(uploadedFilePath));
         log.info("회원 가입 정상 수행됨! - saved user - {}", saved);
         return new UserSignUpResponseDTO(saved);
+    }
+
+    public LoginResponseDTO login(final LoginRequestDTO dto) {
+        // 회원 정보 조회 (이메일)
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디 입니다."));
+
+        // 패스워드 검증
+        String rawPassword = dto.getPassword(); // 입력한 비번
+        String encodedPassword = user.getPassword(); // DB에 저장된 암호화된 비번
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new RuntimeException("비밀번호가 틀렸습니다.");
+        }
+        log.info("{}님 로그인 성공!", user.getEmail());
+        return new LoginResponseDTO(user);
     }
 }

@@ -1,6 +1,8 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
+import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +42,7 @@ public class UserController {
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
             BindingResult result
     ) {
-        log.info("/api/auth POST! - {}", dto);
+        log.info("/issue-trend POST! - {}", dto);
         ResponseEntity<FieldError> resultEntity = getFieldErrorResponseEntity(result);
         if (resultEntity != null) return resultEntity;
         try {
@@ -55,6 +57,19 @@ public class UserController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // 로그인 요청 처리
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
+            @Validated @RequestBody LoginRequestDTO dto,
+            BindingResult result
+    ) {
+        log.info("/issue-trend POST! - {}", dto);
+        ResponseEntity<FieldError> resultEntity2 = getFieldErrorResponseEntity(result);
+        if (resultEntity2 != null) return resultEntity2;
+        LoginResponseDTO responseDTO = userService.login(dto);
+        return ResponseEntity.ok().body(responseDTO);
     }
 
     // BindingResult 에서 유효성 검사 오류가 있는지 확인

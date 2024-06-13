@@ -36,8 +36,7 @@ public class User {
     private String email;
 
     //비밀번호
-    @Size(max = 20)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String password;
 
     //핸드폰 번호
