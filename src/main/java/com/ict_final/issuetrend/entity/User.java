@@ -65,6 +65,11 @@ public class User {
 
     private Date refreshTokenExpiryDate; // 리프레시 토큰의 만료일.
 
+    // 카카오 access token 저장하는 필드
+    public void changeAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<ArticleComments> articleComments;
 

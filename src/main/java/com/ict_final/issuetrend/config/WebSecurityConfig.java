@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.config;
 
+import com.ict_final.issuetrend.filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 @Slf4j
 public class WebSecurityConfig {
-
+    private final JwtAuthFilter jwtAuthFilter;
     //Spring Security 설정을 통해 특정 엔드포인트에 대한 접근을 허용하고, 나머지 요청은 인증을 요구하며, CSRF 보호를 비활성화합니다.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

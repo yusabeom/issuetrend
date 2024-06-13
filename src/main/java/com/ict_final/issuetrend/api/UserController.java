@@ -2,6 +2,7 @@ package com.ict_final.issuetrend.api;
 
 import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
+import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.service.UserService;
@@ -80,5 +81,12 @@ public class UserController {
                     .body(result.getFieldError());
         }
         return null;
+    }
+    @GetMapping("/kakaologin")
+    public ResponseEntity<?> kakaoLogin(String code) {
+        log.info("/api/auth/kakaoLogin - GET! code: {}", code);
+        KakaoLoginResponseDTO responseDTO = userService.kakaoService(code);
+
+        return ResponseEntity.ok().body(responseDTO);
     }
 }
