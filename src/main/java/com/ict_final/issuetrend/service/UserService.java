@@ -76,4 +76,15 @@ public class UserService {
         log.info("{}님 로그인 성공!", user.getEmail());
         return new LoginResponseDTO(user);
     }
+
+    public String findProfilePath(String userNo) {
+        User user
+                = userRepository.findById(userNo).orElseThrow(() -> new RuntimeException());
+        String profileImage = user.getProfileImage();
+        if (profileImage.startsWith("http://")) {
+            return profileImage;
+        }
+        // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
+        return uploadRootPath + "/" + profileImage;
+    }
 }
