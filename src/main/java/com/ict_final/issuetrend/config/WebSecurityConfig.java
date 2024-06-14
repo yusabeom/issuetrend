@@ -1,18 +1,24 @@
 package com.ict_final.issuetrend.config;
 
+import com.ict_final.issuetrend.filter.JWTExceptionFilter;
 import com.ict_final.issuetrend.filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -22,14 +28,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @Slf4j
 public class WebSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+    private final JWTExceptionFilter jwtExceptionFilter;
     //Spring Security 설정을 통해 특정 엔드포인트에 대한 접근을 허용하고, 나머지 요청은 인증을 요구하며, CSRF 보호를 비활성화합니다.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+                .cors(Customizer.withDefaults())
+                // 세션 관리 상태를 STATELESS로 설정해서 spring security가 제공하는 세션 생성 및 관리 기능 사용하지 않겠다.
+                .sessionManagement(SessionManagement ->
+                        SessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(form -> form.disable())
+                .httpBasic(AbstractHttpConfigurer::disable)
+
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/issue-trend/**").permitAll() // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
                         .anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
+
                 );
 
         return http.build();

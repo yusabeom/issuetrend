@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
 import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
@@ -9,6 +10,7 @@ import com.ict_final.issuetrend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -88,5 +90,13 @@ public class UserController {
         KakaoLoginResponseDTO responseDTO = userService.kakaoService(code);
 
         return ResponseEntity.ok().body(responseDTO);
+    }
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+            ){
+        log.info("/api/auth/logout - GET! - user: {}", userInfo.getEmail());
+        String result = userService.logout(userInfo);
+        return ResponseEntity.ok().body(result);
     }
 }

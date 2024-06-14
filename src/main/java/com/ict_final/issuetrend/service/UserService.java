@@ -1,6 +1,7 @@
 package com.ict_final.issuetrend.service;
 
 import com.ict_final.issuetrend.auth.TokenProvider;
+import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
 import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
@@ -196,4 +197,23 @@ public class UserService {
         return (String) responseData.get("access_token");
     }
 
+    public String logout(TokenUserInfo userInfo) {
+        User foundUser = userRepository.findById(userInfo.getUserNo())
+                .orElseThrow();
+
+        String accessToken = foundUser.getAccessToken();
+        if (accessToken != null) {
+            String reqURI = "https://kapi.kakao.com/v1/user/logout";
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + accessToken);
+
+            ResponseEntity<String> responseData
+                    = new RestTemplate().exchange(reqURI, HttpMethod.POST, new HttpEntity<>(headers), String.class);
+            foundUser.changeAccessToken(null);
+            userRepository.save(foundUser);
+
+            return responseData.getBody();
+        }
+        return null;
+    }
 }
