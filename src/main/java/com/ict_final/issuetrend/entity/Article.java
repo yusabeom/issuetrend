@@ -40,7 +40,7 @@ public class Article {
     private String newsAgency;
 
     //기자 이름
-    @JoinColumn(name = "writer")
+    @Column(name = "writer")
     private String writer;
 
     //사진
