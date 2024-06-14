@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
@@ -29,6 +30,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final JWTExceptionFilter jwtExceptionFilter;
+    private final AccessDeniedHandler accessDeniedHandler;
     //Spring Security 설정을 통해 특정 엔드포인트에 대한 접근을 허용하고, 나머지 요청은 인증을 요구하며, CSRF 보호를 비활성화합니다.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,7 +49,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/issue-trend/**").permitAll() // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
                         .anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
 
-                );
+                )
+                .exceptionHandling(ExceptionHandling -> {
+                    ExceptionHandling.accessDeniedHandler(accessDeniedHandler);
+                })
+        ;
 
         return http.build();
     }
