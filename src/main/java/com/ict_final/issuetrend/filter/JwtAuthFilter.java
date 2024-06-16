@@ -81,7 +81,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 스프링 시큐리티 컨테이너에 인증 정보 객체를 등록
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-        } else {
+        }else {
             log.warn("인증이 필요한데 토큰이 없네?");
             throw new IllegalArgumentException();
         }

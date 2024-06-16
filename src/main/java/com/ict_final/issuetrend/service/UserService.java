@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -47,8 +48,9 @@ public class UserService {
     @Value("${kakao.client_secret}")
     private String KAKAO_CLIENT_SECRET;
 
-
+    @Value("${upload.path}")
     private String uploadRootPath;
+
     //   email 중복 확인 처리
     public boolean isDuplicate(String email) {
         if (userRepository.existsByEmail(email)) {
@@ -99,6 +101,9 @@ public class UserService {
         }
         log.info("{}님 로그인 성공!", user.getEmail());
         Map<String, String> token = getTokenMap(user);
+        user.changeRefreshToken(token.get("refresh_token"));
+        user.changeRefreshExpiryDate(tokenProvider.getExpiryDate(token.get("refresh_token")));
+        userRepository.save(user);
         return new LoginResponseDTO(user, token);
     }
     private Map<String, String> getTokenMap(User user) {
@@ -214,6 +219,31 @@ public class UserService {
 
             return responseData.getBody();
         }
+        return null;
+    }
+    public String findProfilePath(String userId) {
+        User user
+                = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
+        String profileImg = user.getProfileImage();
+        if (profileImg.startsWith("http://")) {
+            return profileImg;
+        }
+        // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
+        return uploadRootPath + "/" + profileImg;
+    }
+    public String renewalAccessToken(Map<String, String> tokenRequest) {
+        String refreshToken = tokenRequest.get("refreshToken");
+        boolean isValid = tokenProvider.validateRefreshToken(refreshToken);
+        if (isValid) {
+            // 토큰 값이 유효하다면 만료일자를 검사하자
+            User foundUser = userRepository.findByRefreshToken(refreshToken).orElseThrow();
+            if (!foundUser.getRefreshTokenExpiryDate().before(new Date())) {
+                // 만료일이 오늘보다 이전이 아니라면 -> 만료되지 않았다면
+                String newAccessKey = tokenProvider.createAccessKey(foundUser);
+                return newAccessKey;
+            }
+        }
+
         return null;
     }
 }

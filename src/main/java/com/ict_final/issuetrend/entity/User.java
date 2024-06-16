@@ -70,6 +70,14 @@ public class User {
         this.accessToken = accessToken;
     }
 
+    public void changeRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void changeRefreshExpiryDate(Date date) {
+        this.refreshTokenExpiryDate = date;
+    }
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<ArticleComments> articleComments;
 

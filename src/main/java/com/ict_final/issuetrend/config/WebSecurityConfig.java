@@ -21,6 +21,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 @Configuration
 @EnableWebSecurity
@@ -31,9 +34,16 @@ public class WebSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final JWTExceptionFilter jwtExceptionFilter;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final RequestProperties properties;
+
     //Spring Security 설정을 통해 특정 엔드포인트에 대한 접근을 허용하고, 나머지 요청은 인증을 요구하며, CSRF 보호를 비활성화합니다.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+    jwtAuthFilter.setPermitAllPatterns(properties.getPermitAllPatterns());
+        log.info("리스트: {}", properties.getPermitAllPatterns());
+        log.info("배열로 변환: {}", Arrays.toString(properties.getPermitAllPatterns().toArray()));
+
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .cors(Customizer.withDefaults())
@@ -46,14 +56,15 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/issue-trend/**").permitAll() // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
+                        .requestMatchers("/issue-trend/load-profile").authenticated()
+                        .requestMatchers(Arrays.toString(properties.getPermitAllPatterns().toArray()).split(", "))
+                        .permitAll() // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
                         .anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
 
                 )
                 .exceptionHandling(ExceptionHandling -> {
                     ExceptionHandling.accessDeniedHandler(accessDeniedHandler);
-                })
-        ;
+                });
 
         return http.build();
     }
