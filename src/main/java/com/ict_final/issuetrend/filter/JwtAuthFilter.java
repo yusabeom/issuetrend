@@ -52,7 +52,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         boolean isPermitAllUrl = permitAllPatterns.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, requestURI));
-        log.info("isPermitAllUrl: {}", isPermitAllUrl);
+        log.info("Request URI: {} - isPermitAllUrl: {}", requestURI, isPermitAllUrl);
 
         if (isPermitAllUrl) {
 

@@ -58,7 +58,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/issue-trend/load-profile").authenticated()
                         .requestMatchers(Arrays.toString(properties.getPermitAllPatterns().toArray()).split(", "))
-                        .permitAll() // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
+                        .permitAll()
+                        // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
                         .anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
 
                 )
