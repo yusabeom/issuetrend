@@ -29,4 +29,8 @@ public class ArticleService {
     public List<Article> searchArticles(String keyword) {
        return articleRepository.findAtriclesByKeyword(keyword);
     }
+
+    public Article getArticleByCode(String articleCode) {
+        return articleRepository.findByArticleCode(articleCode);
+    }
 }
