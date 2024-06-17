@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.service;
 
+import com.ict_final.issuetrend.dto.response.KeywordsFrequencyResponseDTO;
 import com.ict_final.issuetrend.entity.KeyWords;
 import com.ict_final.issuetrend.repository.KeywordRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,17 +22,49 @@ public class KeywordService {
 
     private final KeywordRepository keywordRepository;
 
-    public Map<String, Long> getTodayKeywordFrequency() {
+    public List<KeywordsFrequencyResponseDTO> getTodayKeywordFrequency() {
         List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByDate();
+        List<String> keywords = new ArrayList<>();
 
-        return keyWordsList.stream()
-                .collect(Collectors.groupingBy(KeyWords::getKeyword, Collectors.counting()));
+        for (KeyWords kw : keyWordsList) {
+            keywords.add(kw.getKeyword());
+        }
+
+        List<KeywordsFrequencyResponseDTO> frequencyList = calculateKeywordFrequency(keywords);
+
+        return frequencyList;
     }
 
-    public Map<String, Long> getTodayKeywordByRegionFrequency(String region) {
+    public List<KeywordsFrequencyResponseDTO> getTodayKeywordByRegionFrequency(String region) {
         List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByRegion(region);
+        List<String> keywords = new ArrayList<>();
 
-        return keyWordsList.stream()
-                .collect(Collectors.groupingBy(KeyWords::getKeyword, Collectors.counting()));
+        for (KeyWords kw : keyWordsList) {
+            keywords.add(kw.getKeyword());
+        }
+
+        List<KeywordsFrequencyResponseDTO> frequencyList = calculateKeywordFrequency(keywords);
+
+        // 결과 출력
+        for (KeywordsFrequencyResponseDTO kf : frequencyList) {
+            System.out.println("키워드: " + kf.getKeyword() + ", 빈도수: " + kf.getFrequency());
+        }
+
+        return frequencyList;
+    }
+
+    public static List<KeywordsFrequencyResponseDTO> calculateKeywordFrequency(List<String> keywords) {
+        Map<String, Integer> frequencyMap = new HashMap<>();
+
+        for (String keyword : keywords) {
+            frequencyMap.put(keyword, frequencyMap.getOrDefault(keyword, 0) + 1);
+        }
+
+        List<KeywordsFrequencyResponseDTO> frequencyList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
+            frequencyList.add(new KeywordsFrequencyResponseDTO(entry.getKey(), entry.getValue()));
+        }
+
+        return frequencyList;
     }
 }
