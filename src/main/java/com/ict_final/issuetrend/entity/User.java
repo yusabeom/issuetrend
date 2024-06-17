@@ -68,4 +68,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<LocalChat> localChats;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<FavoriteKeyword> favoriteKeywords;
 }

@@ -1,9 +1,18 @@
 package com.ict_final.issuetrend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Getter
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+@Entity
+@Table(name = "tbl_search_term")
 
 public class SearchTerm {
 

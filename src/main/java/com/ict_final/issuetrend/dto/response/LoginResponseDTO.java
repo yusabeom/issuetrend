@@ -19,13 +19,11 @@ public class LoginResponseDTO {
     private LoginPath loginPath;
     private String profileImage;
     private String regionName;
-    private String phoneNum;
 
     public LoginResponseDTO(User user) {
         this.email = user.getEmail();
         this.loginPath = user.getLoginPath();
         this.profileImage = user.getProfileImage();
         this.regionName = user.getRegionName();
-        this.phoneNum = user.getPhoneNum();
     }
 }
