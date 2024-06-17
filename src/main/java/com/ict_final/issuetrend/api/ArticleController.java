@@ -2,6 +2,7 @@ package com.ict_final.issuetrend.api;
 
 import com.ict_final.issuetrend.dto.request.RegionRequestDTO;
 import com.ict_final.issuetrend.dto.response.ArticleDetailResponseDTO;
+import com.ict_final.issuetrend.dto.response.KeywordsFrequencyResponseDTO;
 import com.ict_final.issuetrend.entity.Article;
 import com.ict_final.issuetrend.service.ArticleService;
 import com.ict_final.issuetrend.service.KeywordService;
@@ -50,7 +51,7 @@ public class ArticleController {
         log.info("todayKeywords GetMapping request!");
 
         try {
-            Map<String, Long> todayKeywordCounts = keywordService.getTodayKeywordFrequency();
+            List<KeywordsFrequencyResponseDTO> todayKeywordCounts = keywordService.getTodayKeywordFrequency();
 
             return ResponseEntity.ok().body(todayKeywordCounts);
         } catch (Exception e) {
@@ -88,7 +89,7 @@ public class ArticleController {
         log.info("todayKeywords GetMapping request! region : {}", requestDTO.getRegion());
 
         try {
-            Map<String, Long> todayKeywordCounts = keywordService.getTodayKeywordByRegionFrequency(requestDTO.getRegion());
+            List<KeywordsFrequencyResponseDTO> todayKeywordCounts = keywordService.getTodayKeywordByRegionFrequency(requestDTO.getRegion());
 
             return ResponseEntity.ok().body(todayKeywordCounts);
         } catch (Exception e) {
