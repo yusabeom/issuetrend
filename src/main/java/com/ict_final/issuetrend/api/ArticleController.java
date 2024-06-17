@@ -130,4 +130,27 @@ public class ArticleController {
         }
     }
 
+    // 기사별 상세 페이지 (특정 기사 조회)
+    @GetMapping("/articles/{articleCode}")
+    public ResponseEntity<?> getArticleDetail(@PathVariable String articleCode) {
+        log.info("Fetching article with code: {}", articleCode);
+
+        try {
+            Article article = articleService.getArticleByCode(articleCode);
+
+            if (article == null) {
+                log.info("No article found with code: {}", articleCode);
+                return ResponseEntity.noContent().build();
+            }
+
+            ArticleDetailResponseDTO responseDTO = new ArticleDetailResponseDTO(article);
+
+            return ResponseEntity.ok().body(responseDTO);
+        } catch (Exception e) {
+            log.error("Error fetching article", e);
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching article");
+        }
+    }
+
 }

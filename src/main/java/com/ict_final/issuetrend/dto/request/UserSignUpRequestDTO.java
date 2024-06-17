@@ -22,17 +22,12 @@ public class UserSignUpRequestDTO {
     private String password;
 
     @NotBlank
-    @Size(max = 11)
-    private String phoneNum;
-
-    @NotBlank
     private String regionName;
 
     public User toEntity(String uploadedFilePath) {
         return User.builder()
                 .email(email)
                 .password(password)
-                .phoneNum(phoneNum)
                 .regionName(regionName)
                 .profileImage(uploadedFilePath)
                 .build();
