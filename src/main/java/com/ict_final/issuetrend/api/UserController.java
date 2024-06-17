@@ -42,7 +42,7 @@ public class UserController {
     }
 
     // 회원가입 요청 처리
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<?> signUp(
             @Validated @RequestPart("user") UserSignUpRequestDTO dto,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,

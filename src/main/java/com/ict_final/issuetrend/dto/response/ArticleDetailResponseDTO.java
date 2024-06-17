@@ -25,7 +25,7 @@ public class ArticleDetailResponseDTO {
     public ArticleDetailResponseDTO(Article article) {
         this.articleCode = article.getArticleCode();
         this.title = article.getTitle();
-        this.text = article.getArticleCode();
+        this.text = article.getText();
         this.createdDate = article.getCreatedDate();
         this.newsAgency = article.getNewsAgency();
         this.writer = article.getWriter();
