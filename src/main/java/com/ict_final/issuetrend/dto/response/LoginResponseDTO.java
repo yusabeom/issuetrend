@@ -18,16 +18,16 @@ public class LoginResponseDTO {
     private String profileImage;
     private String regionName;
     private Map<String, String> token;
-    public LoginResponseDTO(User user, Map<String, String> token) {
 
 
-    public LoginResponseDTO(User user) {
 
-        this.email = user.getEmail();
-        this.loginPath = user.getLoginPath();
-        this.profileImage = user.getProfileImage();
-        this.regionName = user.getRegionName();
-        this.token = token;
 
-    }
+    public LoginResponseDTO(User user, Map < String, String > token) {
+            this.email = user.getEmail();
+            this.loginPath = user.getLoginPath();
+            this.profileImage = user.getProfileImage();
+            this.regionName = user.getRegionName();
+            this.token = token;
+        }
+
 }
