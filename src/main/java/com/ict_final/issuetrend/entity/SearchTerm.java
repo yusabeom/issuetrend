@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +13,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "tbl_search_term")
+
 public class SearchTerm {
 
     //검색어 번호

@@ -1,6 +1,7 @@
 package com.ict_final.issuetrend.entity;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 
 @Getter
@@ -9,9 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @Entity
 @Table(name = "tbl_favorite_keyword")
+
 public class FavoriteKeyword {
 
     //키워드 번호
