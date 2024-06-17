@@ -25,4 +25,8 @@ public class ArticleService {
     public List<Article> getTodayArticleByRegion(String region) {
         return articleRepository.findArticleByRegion(region);
     }
+
+    public List<Article> searchArticles(String keyword) {
+       return articleRepository.findAtriclesByKeyword(keyword);
+    }
 }

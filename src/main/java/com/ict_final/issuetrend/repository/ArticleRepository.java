@@ -22,4 +22,6 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
             "WHERE k.keyword LIKE :region AND DATE(a.createdDate) = CURRENT_DATE")
     List<Article> findArticleByRegion(@Param("region") String region);
 
+    @Query("SELECT DISTINCT a FROM Article a WHERE a.text LIKE %:keyword%")
+    List<Article> findAtriclesByKeyword(@Param("keyword") String keyword);
 }

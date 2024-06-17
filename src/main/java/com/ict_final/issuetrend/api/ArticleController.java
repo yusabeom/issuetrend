@@ -97,4 +97,36 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving today's keywords");
         }
     }
+
+    // 키워드로 기사 검색하기
+    @GetMapping("/search")
+    public ResponseEntity<?> searchArticles(@RequestParam String keyword) {
+        log.info("Searching articles for keyword: {}", keyword);
+
+        try {
+            // 공백 입력시 badRequest 도출
+            if (keyword.trim().isEmpty()) {
+                log.info("Empty keyword provided.");
+                return ResponseEntity.badRequest().body("Empty keyword provided.");
+            }
+
+            List<Article> searchedArticles = articleService.searchArticles(keyword);
+
+            if (searchedArticles.isEmpty()) {
+                log.info("No articles: {}", keyword);
+                return ResponseEntity.noContent().build();
+            }
+
+            List<ArticleDetailResponseDTO> responseDTOList = searchedArticles.stream()
+                    .map(ArticleDetailResponseDTO::new)
+                    .toList();
+
+            return ResponseEntity.ok().body(responseDTOList);
+        } catch (Exception e) {
+            log.error("Error searching articles", e);
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error searching articles");
+        }
+    }
+
 }
