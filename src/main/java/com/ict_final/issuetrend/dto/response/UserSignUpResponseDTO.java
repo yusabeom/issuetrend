@@ -12,12 +12,10 @@ import lombok.*;
 @Builder
 public class UserSignUpResponseDTO {
     private String email;
-    private String phoneNum;
     private String regionName;
 
     public UserSignUpResponseDTO(User saved) {
         this.email = saved.getEmail();
-        this.phoneNum = saved.getPhoneNum();
         this.regionName = saved.getRegionName();
     }
 }

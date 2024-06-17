@@ -39,18 +39,9 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
-    //핸드폰 번호
-    @Size(max = 11)
-    @Column(name = "phone_num",length = 20, nullable = false)
-    private String phoneNum;
-
     //지역명
     @Column(name = "region_name", length = 20,nullable = false)
     private String regionName;
-
-    //관심키워드
-    @Column(name = "favorite_keyword", length = 20)
-    private String favoriteKeyword;
 
     //로그인경로
     @Enumerated(EnumType.STRING)
@@ -77,4 +68,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<LocalChat> localChats;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<FavoriteKeyword> favoriteKeywords;
 }
