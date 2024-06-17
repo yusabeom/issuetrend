@@ -42,7 +42,7 @@ public class WebSecurityConfig {
 
     jwtAuthFilter.setPermitAllPatterns(properties.getPermitAllPatterns());
         log.info("리스트: {}", properties.getPermitAllPatterns());
-        log.info("배열로 변환: {}", Arrays.toString(properties.getPermitAllPatterns().toArray()));
+//        log.info("배열로 변환: {}", Arrays.toString(properties.getPermitAllPatterns().toArray()).substring(1, ));
 
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
@@ -55,12 +55,14 @@ public class WebSecurityConfig {
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/issue-trend/load-profile").authenticated()
-                        .requestMatchers(Arrays.toString(properties.getPermitAllPatterns().toArray()).split(", "))
-                        .permitAll()
-                        // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
-                        .anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
+                .authorizeHttpRequests(auth -> {
+                            properties.getPermitAllPatterns()
+                                    .forEach(url -> auth.requestMatchers(url).permitAll());
+                            auth.requestMatchers("/issue-trend/load-profile").authenticated()
+                            // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
+                            .anyRequest().authenticated(); // 그 외의 모든 요청은 인증 필요
+                        }
+
 
                 )
                 .exceptionHandling(ExceptionHandling -> {

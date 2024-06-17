@@ -75,7 +75,7 @@ public class UserController {
             @Validated @RequestBody LoginRequestDTO dto,
             BindingResult result
     ) {
-        log.info("/issue-trend POST! - {}", dto);
+        log.info("/issue-trend/login POST! - {}", dto);
         ResponseEntity<FieldError> resultEntity2 = getFieldErrorResponseEntity(result);
         if (resultEntity2 != null) return resultEntity2;
         LoginResponseDTO responseDTO = userService.login(dto);

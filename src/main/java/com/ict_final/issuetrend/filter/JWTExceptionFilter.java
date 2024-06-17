@@ -45,6 +45,8 @@ public class JWTExceptionFilter extends OncePerRequestFilter {
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType("application/json; charset=UTF-8");
 
+        log.info("setErrorResponse called!");
+
         // Map 생성 및 데이터 추가
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("message", errorCode.toString());

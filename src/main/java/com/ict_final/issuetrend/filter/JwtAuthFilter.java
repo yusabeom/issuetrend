@@ -55,7 +55,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("Request URI: {} - isPermitAllUrl: {}", requestURI, isPermitAllUrl);
 
         if (isPermitAllUrl) {
-
             filterChain.doFilter(request, response);
             return;
         }
