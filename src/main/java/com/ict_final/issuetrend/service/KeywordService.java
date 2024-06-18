@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,9 +21,10 @@ import java.util.stream.Collectors;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
+    LocalDate date = LocalDate.now().minusDays(1);
 
     public List<KeywordsFrequencyResponseDTO> getTodayKeywordFrequency() {
-        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByDate();
+        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByDate(date);
         List<String> keywords = new ArrayList<>();
 
         for (KeyWords kw : keyWordsList) {
@@ -36,7 +37,7 @@ public class KeywordService {
     }
 
     public List<KeywordsFrequencyResponseDTO> getTodayKeywordByRegionFrequency(String region) {
-        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByRegion(region);
+        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByRegion(region, date);
         List<String> keywords = new ArrayList<>();
 
         for (KeyWords kw : keyWordsList) {
