@@ -1,9 +1,13 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.dto.request.ArtComRequestDTO;
 import com.ict_final.issuetrend.dto.request.RegionRequestDTO;
+import com.ict_final.issuetrend.dto.response.ArtComResponseDTO;
 import com.ict_final.issuetrend.dto.response.ArticleDetailResponseDTO;
 import com.ict_final.issuetrend.dto.response.KeywordsFrequencyResponseDTO;
 import com.ict_final.issuetrend.entity.Article;
+import com.ict_final.issuetrend.entity.ArticleComments;
+import com.ict_final.issuetrend.service.ArticleCommentsService;
 import com.ict_final.issuetrend.service.ArticleService;
 import com.ict_final.issuetrend.service.KeywordService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -23,6 +29,7 @@ public class ArticleController {
 
     private final ArticleService articleService;
     private final KeywordService keywordService;
+    private final ArticleCommentsService articleCommentsService;
 
     // 오늘 기사 가져오기
     @GetMapping("/todayArticles")
@@ -101,12 +108,12 @@ public class ArticleController {
 
     // 키워드로 기사 검색하기
     @GetMapping("/search")
-    public ResponseEntity<?> searchArticles(@RequestParam String keyword) {
+    public ResponseEntity<?> searchArticles(@RequestParam("keyword") String keyword) {
         log.info("Searching articles for keyword: {}", keyword);
 
         try {
             // 공백 입력시 badRequest 도출
-            if (keyword.trim().isEmpty()) {
+            if (keyword == null || keyword.trim().isEmpty()) {
                 log.info("Empty keyword provided.");
                 return ResponseEntity.badRequest().body("Empty keyword provided.");
             }
@@ -150,6 +157,101 @@ public class ArticleController {
             log.error("Error fetching article", e);
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching article");
+        }
+    }
+
+    // 기사별 댓글 작성
+    @PostMapping("/articles/{articleCode}/comments")
+    private ResponseEntity<?> createCommentByArticle(@RequestBody ArtComRequestDTO requestDTO) {
+        try {
+            ArticleComments comment = articleCommentsService.createComment(requestDTO);
+            return ResponseEntity.ok().body(new  ArtComResponseDTO(comment));
+        } catch (Exception e) {
+            log.error("Error adding comment", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding comment: " + e.getMessage());
+        }
+    }
+
+    // 기사별 댓글 전체조회
+    @GetMapping("/articles/{articleCode}/comments")
+    private ResponseEntity<?> getCommentByArticle(@PathVariable String articleCode) {
+        try {
+            List<ArticleComments> comments = articleCommentsService.getCommentsByArticleCode(articleCode);
+            List<ArtComResponseDTO> collect = comments.stream()
+                    .map(ArtComResponseDTO::new)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok().body(collect);
+        } catch (Exception e) {
+            log.error("Error fetching comments", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching comments");
+        }
+    }
+
+    // 기사별 댓글 수정
+    @PutMapping("/articles/{articleCode}/comments/{commentNo}")
+    public ResponseEntity<?> updateCommentByArticle(
+            @PathVariable String articleCode,
+            @PathVariable Long commentNo,
+            @RequestBody Map<String, String> request) {
+        log.info("Updating comment with num {} for article {}", commentNo, articleCode);
+
+        try {
+            // 댓글 조회
+            Optional<ArticleComments> optionalComment = articleCommentsService.findByCommentNo(commentNo);
+            if (optionalComment.isEmpty()) {
+                log.info("Comment with num {} not found", commentNo);
+                return ResponseEntity.notFound().build();
+            }
+
+            ArticleComments comment = optionalComment.get();
+
+            // 요청 바디에서 수정할 내용 가져오기
+            String updatedText = request.get("text");
+            if (updatedText == null || updatedText.trim().isEmpty()) {
+                log.info("Empty or missing 'text' field in request body");
+                return ResponseEntity.badRequest().body("Empty or missing 'text' field in request body");
+            }
+
+            // 댓글 내용 업데이트
+            comment.setText(updatedText);
+
+            // 변경 사항을 데이터베이스에 저장
+            articleCommentsService.updateComment(comment);
+
+            // 수정된 댓글 응답
+            return ResponseEntity.ok().body(new ArtComResponseDTO(comment));
+        } catch (Exception e) {
+            log.error("Error updating comment", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating comment");
+        }
+    }
+
+    // 기사별 댓글 삭제
+    @DeleteMapping("/articles/{articleCode}/comments/{commentNo}")
+    public ResponseEntity<?> deleteCommentByArticle(
+            @PathVariable String articleCode,
+            @PathVariable Long commentNo) {
+        log.info("Deleting comment with id {} for article {}", commentNo, articleCode);
+
+        try {
+            // 댓글 조회
+            Optional<ArticleComments> optionalComment = articleCommentsService.findByCommentNo(commentNo);
+            if (optionalComment.isEmpty()) {
+                log.info("Comment with id {} not found", commentNo);
+                return ResponseEntity.notFound().build();
+            }
+
+            ArticleComments comment = optionalComment.get();
+
+            // 댓글 삭제
+            articleCommentsService.deleteComment(comment);
+
+            // 삭제 성공 응답
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("Error deleting comment", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting comment");
         }
     }
 

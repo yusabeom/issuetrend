@@ -1,7 +1,11 @@
 package com.ict_final.issuetrend.service;
 
+import com.ict_final.issuetrend.dto.request.ArtComRequestDTO;
 import com.ict_final.issuetrend.entity.Article;
+import com.ict_final.issuetrend.entity.ArticleComments;
+import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.ArticleRepository;
+import com.ict_final.issuetrend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,4 +38,6 @@ public class ArticleService {
     public Article getArticleByCode(String articleCode) {
         return articleRepository.findByArticleCode(articleCode);
     }
+
+
 }

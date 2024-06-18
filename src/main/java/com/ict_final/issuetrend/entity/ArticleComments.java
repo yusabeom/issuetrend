@@ -31,6 +31,7 @@ public class ArticleComments {
     private Article article;
 
     //내용
+    @Setter
     @Column(name = "text", length = 500)
     private String text;
 
