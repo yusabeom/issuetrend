@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -17,13 +17,14 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    LocalDate date = LocalDate.now().minusDays(1);
 
     public List<Article> getTodayArticles() {
-        return articleRepository.findArticleByDate();
+        return articleRepository.findArticleByDate(date);
     }
 
     public List<Article> getTodayArticleByRegion(String region) {
-        return articleRepository.findArticleByRegion(region);
+        return articleRepository.findArticleByRegion(region, date);
     }
 
     public List<Article> searchArticles(String keyword) {

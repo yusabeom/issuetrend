@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,7 +23,7 @@ class ArticleRepositoryTest {
 
     @Test
     public void findArticleByDate() {
-        List<Article> articleByDate = repository.findArticleByDate();
+        List<Article> articleByDate = repository.findArticleByDate(LocalDate.now().minusDays(1));
 
         for (Article article : articleByDate) {
             System.out.println("기사 코드 = " + article.getArticleCode());
@@ -31,7 +32,7 @@ class ArticleRepositoryTest {
 
     @Test
     public void findArticleByRegion() {
-        List<Article> articleByRegion = repository.findArticleByRegion("서울%");
+        List<Article> articleByRegion = repository.findArticleByRegion("서울%", LocalDate.now().minusDays(1));
 
         for (Article article : articleByRegion) {
             System.out.println("기사 제목 = " + article.getTitle());
