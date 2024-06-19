@@ -26,4 +26,8 @@ public class SearchTerm {
     @Column(name = "search_term", length = 50)
     private String searchTerm;
 
+    public SearchTerm(String keyword) {
+        this.searchTerm = keyword;
+    }
+
 }
