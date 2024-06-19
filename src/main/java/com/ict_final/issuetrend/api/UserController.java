@@ -150,7 +150,7 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
-    private MediaType findExtensionAndGetMediaType(String filePath) {
+    public static MediaType findExtensionAndGetMediaType(String filePath) {
 
         // 파일 경로에서 확장자 추출
         // C:/todo_upload/nlskdnakscnlknklcs_abc.jpg
