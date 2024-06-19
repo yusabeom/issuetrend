@@ -10,6 +10,7 @@ import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.UserRepository;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +26,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -50,6 +50,11 @@ public class UserService {
 
     @Value("${upload.path}")
     private String uploadRootPath;
+
+    private final JavaMailSender javaMailSender;
+
+    @Value("${spring.mail.username}")
+    private String username;
 
     //   email 중복 확인 처리
     public boolean isDuplicate(String email) {
@@ -245,5 +250,42 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public void sendEmail(String email) throws Exception {
+        String tempPassword = generateTemporaryPassword();
+        updatePasswordByEmail(email, tempPassword);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+        helper.setFrom(username);
+        helper.setTo(email);
+        helper.setSubject("임시 비밀번호 발송합니다");
+        helper.setText("아이디 : " + email + "\n임시 비밀번호 : " + tempPassword +
+                "\n\n임시 비밀번호로 로그인 후 비밀번호를 변경하세요", true);
+        javaMailSender.send(mimeMessage);
+    }
+
+    private void updatePasswordByEmail(String email, String tempPassword) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        if (user != null) {
+            user.setPassword(tempPassword);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User with email " + email + " not found");
+        }
+    }
+
+    public static String generateTemporaryPassword() {
+        int length = 10; // 비밀번호 길이 설정
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            password.append(characters.charAt(random.nextInt(characters.length())));
+        }
+
+        return password.toString();
     }
 }

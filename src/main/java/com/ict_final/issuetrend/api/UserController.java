@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -178,5 +180,22 @@ public class UserController {
                     .body(result.getFieldError());
         }
         return null;
+    }
+
+
+    @GetMapping("/send-password")
+    public ResponseEntity<?> sendEmail(@RequestParam String email) {
+
+        if (userService.isDuplicate(email)) {
+            try {
+                userService.sendEmail(email);
+                return new ResponseEntity<>("Email sent successfully!", HttpStatus.OK);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResponseEntity<>("Error sending email: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("가입 정보가 없습니다", HttpStatus.BAD_REQUEST);
+        }
     }
 }
