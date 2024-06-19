@@ -19,5 +19,4 @@ public class PostRequestDTO {
     @Size(max = 10000)
     private String text;
 
-    private String img;
 }
