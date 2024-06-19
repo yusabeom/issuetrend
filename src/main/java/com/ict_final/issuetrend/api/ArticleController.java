@@ -145,7 +145,7 @@ public class ArticleController {
 
     // 기사별 상세 페이지 (특정 기사 조회)
     @GetMapping("/articles/{articleCode}")
-    public ResponseEntity<?> getArticleDetail(@PathVariable String articleCode) {
+    public ResponseEntity<?> getArticleDetail(@PathVariable("articleCode") String articleCode) {
         log.info("Fetching article with code: {}", articleCode);
 
         try {
@@ -180,7 +180,7 @@ public class ArticleController {
 
     // 기사별 댓글 전체조회
     @GetMapping("/articles/{articleCode}/comments")
-    private ResponseEntity<?> getCommentByArticle(@PathVariable String articleCode) {
+    private ResponseEntity<?> getCommentByArticle(@PathVariable("articleCode") String articleCode) {
         try {
             List<ArticleComments> comments = articleCommentsService.getCommentsByArticleCode(articleCode);
             List<ArtComResponseDTO> collect = comments.stream()
@@ -197,8 +197,8 @@ public class ArticleController {
     // 기사별 댓글 수정
     @PutMapping("/articles/{articleCode}/comments/{commentNo}")
     public ResponseEntity<?> updateCommentByArticle(
-            @PathVariable String articleCode,
-            @PathVariable Long commentNo,
+            @PathVariable("articleCode") String articleCode,
+            @PathVariable("commentNo") Long commentNo,
             @RequestBody Map<String, String> request) {
         log.info("Updating comment with num {} for article {}", commentNo, articleCode);
 
@@ -236,8 +236,8 @@ public class ArticleController {
     // 기사별 댓글 삭제
     @DeleteMapping("/articles/{articleCode}/comments/{commentNo}")
     public ResponseEntity<?> deleteCommentByArticle(
-            @PathVariable String articleCode,
-            @PathVariable Long commentNo) {
+            @PathVariable("articleCode") String articleCode,
+            @PathVariable("commentNo") Long commentNo) {
         log.info("Deleting comment with id {} for article {}", commentNo, articleCode);
 
         try {
