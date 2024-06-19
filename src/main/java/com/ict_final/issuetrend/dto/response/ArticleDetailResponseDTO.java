@@ -65,7 +65,7 @@ public class ArticleDetailResponseDTO {
     }
 
     // createdDate를 포맷하는 메서드
-    private String formatCreatedDate(LocalDateTime createdDate) {
+    public static String formatCreatedDate(LocalDateTime createdDate) {
             // 널체크
             if (createdDate == null) {
                 return "";

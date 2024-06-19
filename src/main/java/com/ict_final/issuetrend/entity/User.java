@@ -20,6 +20,7 @@ import java.util.List;
 @Table(name = "tbl_user")
 public class User {
     //회원번호
+    @Setter
     @Id
     @Column(name = "user_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,4 +84,5 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<FavoriteKeyword> favoriteKeywords;
+
 }
