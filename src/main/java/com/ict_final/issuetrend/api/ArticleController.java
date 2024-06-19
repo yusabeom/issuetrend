@@ -6,10 +6,12 @@ import com.ict_final.issuetrend.dto.response.ArtComResponseDTO;
 import com.ict_final.issuetrend.dto.response.ArticleDetailResponseDTO;
 import com.ict_final.issuetrend.dto.response.KeywordsFrequencyResponseDTO;
 import com.ict_final.issuetrend.entity.Article;
+import com.ict_final.issuetrend.entity.SearchTerm;
 import com.ict_final.issuetrend.entity.ArticleComments;
 import com.ict_final.issuetrend.service.ArticleCommentsService;
 import com.ict_final.issuetrend.service.ArticleService;
 import com.ict_final.issuetrend.service.KeywordService;
+import com.ict_final.issuetrend.service.SearchTermService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,7 @@ public class ArticleController {
     private final ArticleService articleService;
     private final KeywordService keywordService;
     private final ArticleCommentsService articleCommentsService;
+    private final SearchTermService searchTermService;
 
     // 오늘 기사 가져오기
     @GetMapping("/todayArticles")
@@ -110,6 +113,9 @@ public class ArticleController {
     @GetMapping("/search")
     public ResponseEntity<?> searchArticles(@RequestParam("keyword") String keyword) {
         log.info("Searching articles for keyword: {}", keyword);
+
+        // 검색한 키워드 저장
+        searchTermService.saveSearchTerm(new SearchTerm(keyword));
 
         try {
             // 공백 입력시 badRequest 도출
