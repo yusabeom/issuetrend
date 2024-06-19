@@ -8,9 +8,9 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
-
+@Setter
 @Getter
-@ToString
+@ToString(exclude = "favoriteKeywords")
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -82,7 +82,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<LocalChat> localChats;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteKeyword> favoriteKeywords;
+    public void setFavoriteKeywords(List<FavoriteKeyword> favoriteKeywords) {
+        this.favoriteKeywords = favoriteKeywords;
+        favoriteKeywords.forEach(fk -> fk.setUser(this));
+    }
+
 
 }

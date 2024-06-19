@@ -3,9 +3,9 @@ package com.ict_final.issuetrend.entity;
 import jakarta.persistence.*;
 
 import lombok.*;
-
+@Setter
 @Getter
-@ToString
+@ToString(exclude = "user")
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,4 +29,8 @@ public class FavoriteKeyword {
     //키워드
     @Column(name = "favorite_keyword", length = 20)
     private String favoriteKeyword;
+    public FavoriteKeyword(String favoriteKeyword, User user) {
+        this.favoriteKeyword = favoriteKeyword;
+        this.user = user;
+    }
 }

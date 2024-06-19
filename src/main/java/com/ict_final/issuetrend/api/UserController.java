@@ -63,8 +63,9 @@ public class UserController {
             }
             UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
             return ResponseEntity.ok().body(responseDTO);
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("An unexpected error occurred!", e);
+            e.printStackTrace();
             throw new RuntimeException("An unexpected error occurred!", e);
         }
     }
