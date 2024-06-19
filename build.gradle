@@ -38,6 +38,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// 파일 업로드 라이브러리
 	implementation 'commons-io:commons-io:2.8.0'
+	// 메일 전송
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
 
 	// queryDSL
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
