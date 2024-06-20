@@ -40,6 +40,10 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
+    //닉네임
+    @Column(name = "nickname", length = 20,nullable = false)
+    private String nickname;
+
     //지역명
     @Column(name = "region_name", length = 20,nullable = false)
     private String regionName;
@@ -90,5 +94,7 @@ public class User {
         favoriteKeywords.forEach(fk -> fk.setUser(this));
     }
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Scrap> scraps;
 
 }
