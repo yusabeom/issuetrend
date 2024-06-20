@@ -18,7 +18,8 @@ class KeywordRepositoryTest {
 
     @Test
     public void findKeyWordsByDate() {
-        List<KeyWords> keyWordsByDate = repository.findKeyWordsByDate(LocalDate.now().minusDays(1));
+//        List<KeyWords> keyWordsByDate = repository.findKeyWordsByDate(LocalDate.now().minusDays(1));
+        List<KeyWords> keyWordsByDate = repository.findKeyWordsByDate();
 
         for (KeyWords keyWords : keyWordsByDate) {
             System.out.println("keyWords.getKeyword() = " + keyWords.getKeyword());
@@ -27,7 +28,8 @@ class KeywordRepositoryTest {
 
     @Test
     public void findKeyWordsByRegion() {
-        List<KeyWords> keywordsByRegion = repository.findKeyWordsByRegion("서울%", LocalDate.now().minusDays(1));
+//        List<KeyWords> keywordsByRegion = repository.findKeyWordsByRegion("서울%", LocalDate.now().minusDays(1));
+        List<KeyWords> keywordsByRegion = repository.findKeyWordsByRegion("서울%");
 
         for (KeyWords keyWords : keywordsByRegion) {
             System.out.println("키워드 = " + keyWords.getKeyword());
