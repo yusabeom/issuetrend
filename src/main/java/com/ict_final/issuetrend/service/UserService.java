@@ -78,6 +78,7 @@ public class UserService {
         return uniqueFileName;
     }
 
+    @Transactional
     public UserSignUpResponseDTO create(
             final UserSignUpRequestDTO dto, final String uploadedFilePath) {
         String email = dto.getEmail();

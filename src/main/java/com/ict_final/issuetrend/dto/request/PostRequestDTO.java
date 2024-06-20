@@ -16,6 +16,9 @@ public class PostRequestDTO {
     private Long userNo;
 
     @NotBlank
+    private String title;
+
+    @NotBlank
     @Size(max = 10000)
     private String text;
 

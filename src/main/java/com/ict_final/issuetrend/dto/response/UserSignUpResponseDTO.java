@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 public class UserSignUpResponseDTO {
     private String email;
     private String regionName;
-    private List<String> favoriteKeywords;
+//    private List<String> favoriteKeywords;
     public UserSignUpResponseDTO(User saved) {
         this.email = saved.getEmail();
         this.regionName = saved.getRegionName();
-        this.favoriteKeywords = saved.getFavoriteKeywords()
-                .stream()
-                .map(FavoriteKeyword::getFavoriteKeyword)  // FavoriteKeyword 객체에서 keyword 문자열을 추출
-                .collect(Collectors.toList());
+//        this.favoriteKeywords = saved.getFavoriteKeywords()
+//                .stream()
+//                .map(FavoriteKeyword::getFavoriteKeyword)  // FavoriteKeyword 객체에서 keyword 문자열을 추출
+//                .collect(Collectors.toList());
     }
 }
