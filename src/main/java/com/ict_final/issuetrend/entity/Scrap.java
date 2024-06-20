@@ -25,9 +25,9 @@ public class Scrap {
     @JoinColumn(name = "user_no")
     private User user;
 
-    //게시글 번호
+    //기사 코드
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_no")
-    private BoardPost boardPost;
+    @JoinColumn(name = "article_code")
+    private Article article;
 
 }
