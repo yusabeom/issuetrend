@@ -115,7 +115,12 @@ public class ArticleController {
         log.info("Searching articles for keyword: {}", keyword);
 
         // 검색한 키워드 저장
-        searchTermService.saveSearchTerm(new SearchTerm(keyword));
+        if (keyword == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error not keyword");
+
+        } else {
+            searchTermService.saveSearchTerm(new SearchTerm(keyword));
+        }
 
         try {
             // 공백 입력시 badRequest 도출
