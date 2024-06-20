@@ -208,7 +208,8 @@ public class UserService {
     }
 
     public String logout(TokenUserInfo userInfo) {
-        User foundUser = userRepository.findById(userInfo.getUserNo())
+        log.info("getemail: {}", userInfo.getUserNo());
+        User foundUser = userRepository.findByUserNo(userInfo.getUserNo())
                 .orElseThrow();
 
         String accessToken = foundUser.getAccessToken();
@@ -226,9 +227,9 @@ public class UserService {
         }
         return null;
     }
-    public String findProfilePath(String userId) {
+    public String findProfilePath(Long UserNo) {
         User user
-                = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
+                = userRepository.findByUserNo(UserNo).orElseThrow(() -> new RuntimeException());
         String profileImg = user.getProfileImage();
         if (profileImg.startsWith("http://")) {
             return profileImg;

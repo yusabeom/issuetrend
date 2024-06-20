@@ -115,6 +115,8 @@ public class UserController {
     public ResponseEntity<?> loadFile(
             @AuthenticationPrincipal TokenUserInfo userInfo
     ) {
+        log.info("-------userinfo {}", userInfo.getUserNo());
+
         try {
             // 1. 프로필 사진의 경로부터 얻어야 한다.
             String filePath = userService.findProfilePath(userInfo.getUserNo());
