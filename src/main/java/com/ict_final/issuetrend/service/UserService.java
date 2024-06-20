@@ -85,6 +85,10 @@ public class UserService {
         if (isDuplicate(email)) {
             throw new RuntimeException("중복된 이메일 입니다.");
         }
+        String nickname = dto.getNickname();
+        if (nickDuplicate(nickname)){
+            throw new RuntimeException("중복된 닉네임 입니다.");
+        }
         // 패스워드 인코딩
         String encoded = passwordEncoder.encode(dto.getPassword());
         dto.setPassword(encoded);
@@ -289,5 +293,12 @@ public class UserService {
         }
 
         return password.toString();
+    }
+
+    public boolean nickDuplicate(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            log.warn("이메일이 중복되었습니다. - {}", nickname);
+            return true;
+        } else return false;
     }
 }
