@@ -269,7 +269,7 @@ public class UserService {
     private void updatePasswordByEmail(String email, String tempPassword) {
         User user = userRepository.findByEmail(email).orElseThrow();
         if (user != null) {
-            user.setPassword(tempPassword);
+            user.setPassword(passwordEncoder.encode(tempPassword));
             userRepository.save(user);
         } else {
             throw new IllegalArgumentException("User with email " + email + " not found");
