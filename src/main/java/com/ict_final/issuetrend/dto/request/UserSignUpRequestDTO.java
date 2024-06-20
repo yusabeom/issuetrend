@@ -29,6 +29,9 @@ public class UserSignUpRequestDTO {
     @NotBlank
     private String regionName;
 
+    @NotBlank
+    private String nickname;
+
     private String favoriteKeywords;  // 관심 키워드 리스트 추가
 
     public User toEntity(String uploadedFilePath) {
@@ -36,6 +39,7 @@ public class UserSignUpRequestDTO {
                 .email(email)
                 .password(password)
                 .regionName(regionName)
+                .nickname(nickname)
                 .profileImage(uploadedFilePath)
                 .build();
 
