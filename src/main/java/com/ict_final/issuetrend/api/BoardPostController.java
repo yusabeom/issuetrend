@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -118,6 +119,21 @@ public class BoardPostController {
             throw new RuntimeException(e);
         }
     }
+
+    // 게시글 수정하기
+     @PutMapping("/update-post/{postNo}")
+     public ResponseEntity<?> updatePost(
+             @PathVariable Long postNo,
+             @RequestPart("requestDTO") PostRequestDTO requestDTO,
+             @RequestPart(name = "newImage", required = false) MultipartFile newImage) {
+
+         try {
+             BoardPost updatedPost = boardPostService.updatePost(postNo, requestDTO, newImage);
+             return ResponseEntity.ok(new PostResponseDTO(updatedPost));
+         } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating post");
+         }
+     }
 
     // 게시글 삭제하기
     @DeleteMapping("/delete-post/{postNo}")

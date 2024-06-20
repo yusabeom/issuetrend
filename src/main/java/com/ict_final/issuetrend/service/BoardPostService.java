@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,11 +46,41 @@ public class BoardPostService {
 
         BoardPost boardPost = BoardPost.builder()
                 .user(user)
+                .title(requestDTO.getTitle())
                 .text(requestDTO.getText())
                 .img(imgFilePath)
                 .build();
         log.info(boardPost.getUser().getEmail());
        return boardPostRepository.save(boardPost);
+    }
+
+    public BoardPost updatePost(Long postNo, PostRequestDTO requestDTO, MultipartFile newImage) throws IOException {
+        // 게시글 조회
+        BoardPost boardPost = boardPostRepository.findById(postNo)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 새 이미지 저장
+        String newImagePath = boardPost.getImg(); // 기본적으로 기존 이미지를 유지
+        if (newImage != null && !newImage.isEmpty()) {
+            // 기존 이미지 삭제
+            if (newImagePath != null) {
+                String oldImagePath = imgFilePath + "/" + newImagePath;
+                File oldImageFile = new File(oldImagePath);
+                if (oldImageFile.exists()) {
+                    oldImageFile.delete();
+                }
+            }
+            // 새 이미지 업로드
+            newImagePath = uploadProfileImage(newImage);
+        }
+
+        // 텍스트와 이미지 경로 업데이트
+        boardPost.setTitle(requestDTO.getTitle());
+        boardPost.setText(requestDTO.getText());
+        boardPost.setImg(newImagePath);
+        boardPost.setWriteDate(LocalDateTime.now());
+
+        return boardPostRepository.save(boardPost);
     }
 
     public void deletePost(Long postNo) {
@@ -78,4 +109,7 @@ public class BoardPostService {
         // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
         return imgFilePath + "/" + img;
     }
+
+
+
 }

@@ -30,19 +30,28 @@ public class BoardPost {
     @JoinColumn(name = "user_no")
     private User user;
 
+    // 제목
+    @Setter
+    private String title;
+
     //내용
+    @Setter
     @Column(length = 10000)
     private String text;
 
     //작성날짜
+    @Setter
     @CreationTimestamp
     @Column(name = "write_date")
     private LocalDateTime writeDate;
 
     //사진
+    @Setter
     @Column(length = 2500)
     private String img;
 
     @OneToMany(mappedBy = "boardPost", cascade = CascadeType.REMOVE)
     private List<PostComments> postComments;
+
+
 }
