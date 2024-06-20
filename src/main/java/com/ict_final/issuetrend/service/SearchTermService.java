@@ -40,7 +40,7 @@ public class SearchTermService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Scheduled(fixedRate = 3600000) // 1시간(3600000밀리초)마다 실행
+    @Scheduled(initialDelay = 3600000, fixedRate = 3600000) // 1시간(3600000밀리초)마다 실행
     @Transactional
     public void deleteAllSearchTerms() {
         int deletedCount = entityManager.createQuery("DELETE FROM SearchTerm").executeUpdate();
