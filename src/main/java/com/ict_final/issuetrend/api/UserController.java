@@ -45,7 +45,16 @@ public class UserController {
         log.info("Email duplication check result: {}", resultFlag);
         return ResponseEntity.ok().body(resultFlag);
     }
-
+    @GetMapping("nick-check")
+    public ResponseEntity<?> nickCheck(String nickname){
+        if (nickname.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body("닉네임이 존재하지 않습니다.");
+        }
+        boolean nickDuplicate = userService.nickDuplicate(nickname);
+        log.info("nick nickDuplicate check result: {}", nickDuplicate);
+        return ResponseEntity.ok().body(nickDuplicate);
+    }
     // 회원가입 요청 처리
     @PostMapping
     public ResponseEntity<?> signUp(
