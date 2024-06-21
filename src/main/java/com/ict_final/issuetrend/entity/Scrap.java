@@ -3,6 +3,7 @@ package com.ict_final.issuetrend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Setter
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -27,7 +28,7 @@ public class Scrap {
 
     //게시글 번호
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_no")
-    private BoardPost boardPost;
+    @JoinColumn(name = "article_code")
+    private Article article;
 
 }
