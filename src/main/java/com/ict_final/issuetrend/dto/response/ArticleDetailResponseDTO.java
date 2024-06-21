@@ -19,6 +19,7 @@ public class ArticleDetailResponseDTO {
 
     private String articleCode;
     private String title;
+    private String shortTitle;
     private String text;
     private LocalDateTime createdDate;
     private String newsAgency;
@@ -33,6 +34,7 @@ public class ArticleDetailResponseDTO {
     public ArticleDetailResponseDTO(Article article) {
         this.articleCode = article.getArticleCode();
         this.title = article.getTitle();
+        this.shortTitle = (article.getTitle()).substring(0, 10) + "...";
         this.text = article.getText();
         this.createdDate = article.getCreatedDate();
         this.newsAgency = article.getNewsAgency();
