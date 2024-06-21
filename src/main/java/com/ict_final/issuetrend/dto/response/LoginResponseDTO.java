@@ -17,6 +17,7 @@ public class LoginResponseDTO {
     private LoginPath loginPath;
     private String profileImage;
     private String regionName;
+    private String nickname;
     private Map<String, String> token;
 
 
@@ -27,6 +28,7 @@ public class LoginResponseDTO {
             this.loginPath = user.getLoginPath();
             this.profileImage = user.getProfileImage();
             this.regionName = user.getRegionName();
+            this.nickname = user.getNickname();
             this.token = token;
         }
 

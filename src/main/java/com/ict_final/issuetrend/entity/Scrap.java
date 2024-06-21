@@ -3,6 +3,7 @@ package com.ict_final.issuetrend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Setter
 @Getter
 @ToString
 @EqualsAndHashCode

@@ -34,7 +34,23 @@ public class PostResponseDTO {
         this.text = boardPost.getText();
         this.writeDate = boardPost.getWriteDate();
         this.img = boardPost.getImg();
-        this.email = boardPost.getUser().getEmail();
+        this.email = maskEmail(boardPost.getUser().getEmail());
         this.formatDate = formatCreatedDate(boardPost.getWriteDate());
+    }
+
+    private String maskEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return "";
+        }
+        String[] parts = email.split("@");
+        if (parts.length != 2) {
+            return email; // 유효한 이메일 형식이 아닌 경우
+        }
+        String username = parts[0];
+        if (username.length() <= 3) {
+            return username + "****";
+        }
+        String maskedUsername = username.substring(0, 3) + "****";
+        return maskedUsername;
     }
 }
