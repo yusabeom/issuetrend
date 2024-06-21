@@ -1,6 +1,7 @@
 package com.ict_final.issuetrend.api;
 
 import com.ict_final.issuetrend.dto.request.ArtComRequestDTO;
+import com.ict_final.issuetrend.dto.request.ArticleFilterRequestDTO;
 import com.ict_final.issuetrend.dto.request.RegionRequestDTO;
 import com.ict_final.issuetrend.dto.response.ArtComResponseDTO;
 import com.ict_final.issuetrend.dto.response.ArticleDetailResponseDTO;
@@ -145,6 +146,25 @@ public class ArticleController {
             log.error("Error searching articles", e);
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error searching articles");
+        }
+    }
+
+    // 기사 필터링 검색
+    @PostMapping("/filterArticles")
+    public ResponseEntity<?> filterArticles(@RequestBody ArticleFilterRequestDTO filterRequestDTO) {
+        log.info("Filtering articles with request: {}", filterRequestDTO);
+
+        try {
+            List<Article> filteredArticles = articleService.filterArticles(filterRequestDTO);
+
+            List<ArticleDetailResponseDTO> responseDTOList = filteredArticles.stream()
+                    .map(ArticleDetailResponseDTO::new)
+                    .toList();
+
+            return ResponseEntity.ok().body(responseDTOList);
+        } catch (Exception e) {
+            log.error("Error filtering articles", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error filtering articles");
         }
     }
 

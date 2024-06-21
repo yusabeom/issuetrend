@@ -1,6 +1,8 @@
 package com.ict_final.issuetrend.service;
 
 import com.ict_final.issuetrend.dto.request.ArtComRequestDTO;
+import com.ict_final.issuetrend.dto.request.ArticleFilterRequestDTO;
+import com.ict_final.issuetrend.dto.response.ArticleDetailResponseDTO;
 import com.ict_final.issuetrend.entity.Article;
 import com.ict_final.issuetrend.entity.ArticleComments;
 import com.ict_final.issuetrend.entity.User;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,4 +45,12 @@ public class ArticleService {
     }
 
 
+    public List<Article> filterArticles(ArticleFilterRequestDTO filterRequestDTO) {
+        return articleRepository.findArticlesByFilters(
+                filterRequestDTO.getRegion(),
+                filterRequestDTO.getNewsAgency(),
+                filterRequestDTO.getSortOption(),
+                filterRequestDTO.getKeyword()
+        );
+    }
 }
