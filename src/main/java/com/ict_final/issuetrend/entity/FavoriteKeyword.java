@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -11,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@JsonIgnoreProperties("user")
 @Table(name = "tbl_favorite_keyword")
 
 public class FavoriteKeyword {

@@ -55,7 +55,7 @@ public class TokenProvider {
         // 추가 클레임 정의
         Map<String, String> claims = new HashMap<>();
         claims.put("email", userEntity.getEmail());
-
+        claims.put("userNo", String.valueOf(userEntity.getUserNo()));
 
         return Jwts.builder()
                 //token Header에 들어갈 서명
@@ -73,7 +73,7 @@ public class TokenProvider {
     }
 
     public String createAccessKey(User userEntity) {
-        return createToken(userEntity, SECRET_KEY, 1, ChronoUnit.HOURS);
+        return createToken(userEntity, SECRET_KEY, 30, ChronoUnit.SECONDS);
     }
 
     public String createRefreshKey(User userEntity) {
