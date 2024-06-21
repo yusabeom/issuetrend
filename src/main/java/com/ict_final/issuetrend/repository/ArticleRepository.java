@@ -33,4 +33,22 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
 
     // 기사 코드로 기사 상세 조회
     Article findByArticleCode(String articleCode);
+
+    @Query("SELECT DISTINCT a FROM Article a " +
+            "LEFT JOIN a.keywords k " +
+            "WHERE " +
+            "(:region IS NULL OR k.keyword LIKE %:region%) AND " +
+            "(:newsAgency IS NULL OR a.newsAgency LIKE %:newsAgency%) AND " +
+            "(:keyword IS NULL OR a.title LIKE %:keyword% OR a.text LIKE %:keyword%) " +
+            "ORDER BY " +
+            "CASE " +
+            "WHEN :sortOption = '최신순' OR :sortOption IS NULL THEN a.createdDate " +
+            "WHEN :sortOption = '댓글순' THEN SIZE(a.articleComments) " +
+            "END DESC")
+    List<Article> findArticlesByFilters(
+            @Param("region") String region,
+            @Param("newsAgency") String newsAgency,
+            @Param("sortOption") String sortOption,
+            @Param("keyword") String keyword
+    );
 }
