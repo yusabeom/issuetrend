@@ -32,7 +32,7 @@ public class UserSignUpRequestDTO {
     @NotBlank
     private String nickname;
 
-    private String favoriteKeywords;  // 관심 키워드 리스트 추가
+    private List<String> favoriteKeywords;  // 관심 키워드 리스트 추가
 
     public User toEntity(String uploadedFilePath) {
         User user = User.builder()
@@ -44,8 +44,8 @@ public class UserSignUpRequestDTO {
                 .build();
 
         if (favoriteKeywords != null && !favoriteKeywords.isEmpty()) {
-            List<FavoriteKeyword> keywordEntities = Arrays.stream(favoriteKeywords.split(","))
-                    .map(String::trim)  // 공백 제거
+            List<FavoriteKeyword> keywordEntities = favoriteKeywords.stream()
+                    .map(String::trim)
                     .map(keyword -> new FavoriteKeyword(keyword, user))
                     .collect(Collectors.toList());
             user.setFavoriteKeywords(keywordEntities);
