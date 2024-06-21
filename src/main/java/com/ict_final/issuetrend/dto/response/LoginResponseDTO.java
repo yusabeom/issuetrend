@@ -13,6 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class LoginResponseDTO {
+    private Long userNo;
     private String email;
     private LoginPath loginPath;
     private String profileImage;
@@ -24,6 +25,7 @@ public class LoginResponseDTO {
 
 
     public LoginResponseDTO(User user, Map < String, String > token) {
+            this.userNo = user.getUserNo();
             this.email = user.getEmail();
             this.loginPath = user.getLoginPath();
             this.profileImage = user.getProfileImage();
