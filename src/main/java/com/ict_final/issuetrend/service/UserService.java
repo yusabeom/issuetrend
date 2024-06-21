@@ -10,10 +10,12 @@ import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,9 +29,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -55,6 +60,7 @@ public class UserService {
 
     @Value("${spring.mail.username}")
     private String username;
+    private final SpringTemplateEngine templateEngine;
 
     //   email 중복 확인 처리
     public boolean isDuplicate(String email) {
@@ -261,15 +267,29 @@ public class UserService {
     public void sendEmail(String email) throws Exception {
         String tempPassword = generateTemporaryPassword();
         updatePasswordByEmail(email, tempPassword);
+        String htmlBody = mailWithTemplate(tempPassword);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         helper.setFrom(username);
         helper.setTo(email);
-        helper.setSubject("임시 비밀번호 발송합니다");
-        helper.setText("아이디 : " + email + "\n임시 비밀번호 : " + tempPassword +
-                "\n\n임시 비밀번호로 로그인 후 비밀번호를 변경하세요", true);
+        helper.setSubject("Issue Trend 임시 비밀번호 발송");
+        helper.setText(htmlBody, true);
+        helper.addInline("logo", new ClassPathResource("static/logo.png"));
+        helper.addInline("image-1", new ClassPathResource("static/image-1.png"));
         javaMailSender.send(mimeMessage);
+    }
+
+    public String mailWithTemplate(String tempPassword) throws MessagingException {
+        HashMap<String, Object> templateModel = new HashMap<>();
+        templateModel.put("verificationCode", tempPassword);
+
+        Context thymeleafContext = new Context();
+        thymeleafContext.setVariables(templateModel);
+
+        // Process the template
+        return templateEngine.process("mail-templates", thymeleafContext);
+
     }
 
     private void updatePasswordByEmail(String email, String tempPassword) {
