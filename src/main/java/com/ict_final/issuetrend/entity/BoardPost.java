@@ -54,7 +54,4 @@ public class BoardPost {
     private List<PostComments> postComments;
 
 
-
-    @OneToMany(mappedBy = "boardPost", cascade = CascadeType.REMOVE)
-    private List<Scrap> scraps;
 }
