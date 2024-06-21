@@ -35,6 +35,7 @@ public class PostComments {
     private BoardPost boardPost;
 
     //내용
+    @Setter
     private String text;
 
     //작성 날짜

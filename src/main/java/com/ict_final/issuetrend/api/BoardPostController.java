@@ -1,12 +1,14 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.dto.request.BoardComRequestDTO;
 import com.ict_final.issuetrend.dto.request.PostRequestDTO;
+import com.ict_final.issuetrend.dto.response.BoardComResponseDTO;
 import com.ict_final.issuetrend.dto.response.PostResponseDTO;
 import com.ict_final.issuetrend.entity.BoardPost;
-import com.ict_final.issuetrend.entity.User;
+import com.ict_final.issuetrend.entity.PostComments;
 import com.ict_final.issuetrend.repository.BoardPostRepository;
-import com.ict_final.issuetrend.repository.UserRepository;
 import com.ict_final.issuetrend.service.BoardPostService;
+import com.ict_final.issuetrend.service.PostCommentsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -19,11 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,6 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/issue-trend")
 public class BoardPostController {
 
+    private final PostCommentsService postCommentsService;
     private final BoardPostRepository boardPostRepository;
     private final BoardPostService boardPostService;
 
@@ -145,4 +144,58 @@ public class BoardPostController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    // 게시글 댓글 작성하기
+    @PostMapping("/post/{postNo}/comments")
+    public ResponseEntity<?> createPostComment(@RequestBody BoardComRequestDTO requestDTO) {
+        try {
+            PostComments postComment = postCommentsService.createPostComment(requestDTO);
+            return ResponseEntity.ok().body(new BoardComResponseDTO(postComment));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding comment: " + e.getMessage());
+        }
+    }
+
+    // 게시글 댓글 조회하기
+    @GetMapping("/post/{postNo}/comments")
+    public ResponseEntity<?> getPostComments(@PathVariable("postNo") Long postNo) {
+        try {
+            List<PostComments> comments = postCommentsService.getPostCommentsByPostNo(postNo);
+            List<BoardComResponseDTO> collect = comments.stream()
+                    .map(BoardComResponseDTO::new)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok().body(collect);
+        } catch (Exception e) {
+            log.error("Error fetching comments", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching comments");
+        }
+    }
+
+    // 게시글 댓글 수정하기
+    // 댓글 수정
+    @PutMapping("/post/{postNo}/comments/{commentNo}")
+    public ResponseEntity<?> updatePostComment(@RequestBody BoardComRequestDTO requestDTO) {
+        try {
+            PostComments updatedComment = postCommentsService.updatePostComment(requestDTO);
+            return ResponseEntity.ok().body(new BoardComResponseDTO(updatedComment));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating comment: " + e.getMessage());
+        }
+    }
+
+    // 게시글 댓글 삭제하기
+    // 댓글 삭제
+    @DeleteMapping("/post/{postNo}/comments/{commentNo}")
+    public ResponseEntity<?> deletePostComment(
+            @PathVariable("postNo") Long postNo,
+            @PathVariable("commentNo") Long commentNo) {
+        try {
+            postCommentsService.deletePostComment(commentNo);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting comment: " + e.getMessage());
+        }
+    }
+
+
 }
