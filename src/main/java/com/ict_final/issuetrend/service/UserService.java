@@ -4,10 +4,10 @@ import com.ict_final.issuetrend.auth.TokenProvider;
 import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
-import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.KakaoUserDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
+import com.ict_final.issuetrend.entity.LoginPath;
 import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.UserRepository;
 import jakarta.mail.MessagingException;
@@ -132,7 +132,7 @@ public class UserService {
         return token;
     }
 
-    public KakaoLoginResponseDTO kakaoService(String code) {
+    public LoginResponseDTO kakaoService(String code) {
         // 인가 코드를 통해 토큰을 발급받기
         String accessToken = getKakaoAccessToken(code);
         log.info("token: {}", accessToken);
@@ -144,6 +144,8 @@ public class UserService {
         // 일회성 로그인으로 처리 -> dto를 바로 화면단에 리턴
         // 회원가입 처리 -> 이메일 중복 검사 진행 -> 자체 jwt를 생성해서 토큰을 화면단에 리턴.
         // -> 화면단에서는 적절한 url을 선택하여 redirect를 진행.
+
+
 
         if (!isDuplicate(userDTO.getKakaoAccount().getEmail())) {
             // 이메일이 중복되지 않았다. -> 이전에 로그인 한 적 없음 -> DB에 데이터를 세팅
@@ -158,9 +160,10 @@ public class UserService {
 
         // 기존에 로그인했던 사용자의 access token값을 update
         foundUser.changeAccessToken(accessToken);
+        foundUser.setLoginPath(LoginPath.KAKAO);
         userRepository.save(foundUser);
-        String profileImageUrl = userDTO.getKakaoAccount().getProfile().getProfileImageUrl();
-        return new KakaoLoginResponseDTO(foundUser.getEmail(), profileImageUrl,token);
+
+        return new LoginResponseDTO(foundUser, token);
     }
     private KakaoUserDTO getKakaoUserInfo(String accessToken) {
         // 요청 uri
@@ -241,12 +244,12 @@ public class UserService {
     public String findProfilePath(Long UserNo) {
         User user
                 = userRepository.findByUserNo(UserNo).orElseThrow(() -> new RuntimeException());
-        String profileImg = user.getProfileImage();
-        if (profileImg.startsWith("http://")) {
-            return profileImg;
+        String profileImage = user.getProfileImage();
+        if (profileImage.startsWith("http://")) {
+            return profileImage;
         }
         // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
-        return uploadRootPath + "/" + profileImg;
+        return uploadRootPath + "/" + profileImage;
     }
     public String renewalAccessToken(Map<String, String> tokenRequest) {
         String refreshToken = tokenRequest.get("refreshToken");

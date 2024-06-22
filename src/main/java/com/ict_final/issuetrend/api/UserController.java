@@ -97,9 +97,9 @@ public class UserController {
 
 
     @GetMapping("/kakaologin")
-    public ResponseEntity<?> kakaoLogin(String code) {
+    public ResponseEntity<?> kakaoLogin( String code) {
         log.info("/api/auth/kakaoLogin - GET! code: {}", code);
-        KakaoLoginResponseDTO responseDTO = userService.kakaoService(code);
+        LoginResponseDTO responseDTO = userService.kakaoService(code);
 
         return ResponseEntity.ok().body(responseDTO);
     }
