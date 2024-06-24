@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class BoardPostService {
     private final BoardPostRepository boardPostRepository;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     @Value("${img.path}")
     private String imgFilePath;
@@ -93,22 +94,13 @@ public class BoardPostService {
     }
 
     public String uploadProfileImage(MultipartFile img) throws IOException {
-        // 루트 디렉토리가 실존하는 지 확인 후 존재하지 않으면 생성.
-        File root = new File(imgFilePath);
-        if (!root.exists()) root.mkdirs();
         // 파일명을 유니크하게 변경 (이름 충돌 가능성을 대비)
         // UUID와 원본파일명을 결합
         String uniqueFileName = UUID.randomUUID() + "_" + img.getOriginalFilename();
-        // 파일 저장
-        File uploadFile = new File(root, uniqueFileName); // 경로 설정을 수정함
-        img.transferTo(uploadFile);
-        return uniqueFileName;
+
+        return s3Service.uploadToS3Bucket(img.getBytes(), uniqueFileName);
     }
 
-    public String findProfilePath(String img) {
-        // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
-        return imgFilePath + "/" + img;
-    }
 
 
 

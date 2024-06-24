@@ -9,6 +9,10 @@ import com.ict_final.issuetrend.entity.PostComments;
 import com.ict_final.issuetrend.repository.BoardPostRepository;
 import com.ict_final.issuetrend.service.BoardPostService;
 import com.ict_final.issuetrend.service.PostCommentsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "BoardPost API", description = "게시물과 게시물별 댓글 작성 및 수정, 삭제 api 입니다.")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -35,6 +40,8 @@ public class BoardPostController {
     private final BoardPostService boardPostService;
 
     // 게시글 상세 조회
+    @Operation(summary = "게시물 상세 조회", description = "게시물 상세 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "postNo", description = "해당 게시물의 번호를 작성하세요.", example = "1", required = true)
     @GetMapping("/search-post/{postNo}")
     public ResponseEntity<?> getPost(@PathVariable("postNo") Long postNo) {
         try {
@@ -47,6 +54,7 @@ public class BoardPostController {
 
 
     // 게시글 전제 조회하기
+    @Operation(summary = "게시물 전체 조회", description = "게시물 전체 조회를 담당하는 메서드 입니다.")
     @GetMapping("/search-post")
     public ResponseEntity<?> searchPost() {
 
@@ -58,7 +66,15 @@ public class BoardPostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     // 게시글 등록하기
+    @Operation(summary = "게시물 등록", description = "게시물 등록을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "title",description = "게시물 제목을 작성하세요", example = "제목입니다.", required = true),
+            @Parameter(name = "text",description = "게시물 내용을 작성하세요", example = "내용입니다.", required = true),
+            @Parameter(name = "img",description = "프로필 사진 경로를 작성하세요")
+    })
     @PostMapping("/create-post")
     public ResponseEntity<?> createPost(
             @RequestPart("requestDTO") PostRequestDTO requestDTO,
@@ -83,43 +99,29 @@ public class BoardPostController {
     }
 
     // 게시글 이미지 가져오기
+    @Operation(summary = "게시물 이미지 가져오기", description = "게시물 이미지로드를 담당하는 메서드 입니다.")
+    @Parameter(name = "postNo", description = "수정할 게시물 고유 번호를 작성하세요", example = "1", required = true)
     @GetMapping("/load-image/{postNo}")
     public ResponseEntity<?> loadImage(@PathVariable Long postNo) {
         BoardPost post = boardPostRepository.findById(postNo).orElseThrow();
-        try {
+
             // 1. 프로필 사진의 경로부터 얻어야 한다.
-            String filePath = boardPostService.findProfilePath(post.getImg());
+            String filePath = post.getImg();
             log.info("filePath: {}", filePath);
 
-            // 2. 얻어낸 파일 경로를 통해 실제 파일 데이터를 로드하기.
-            File profileFile = new File(filePath);
-
-            // 만약 존재하지 않는 경로라면 클라이언트로 404 status를 리턴.
-            if (!profileFile.exists()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            // 해당 경로에 저장된 파일을 바이트 배열로 직렬화 해서 리턴
-            byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
-
-            // 3. 응답 헤더에 컨텐츠 타입을 설정
-            HttpHeaders headers = new HttpHeaders();
-            MediaType contentType = UserController.findExtensionAndGetMediaType(filePath);
-            if (contentType == null) {
-                return ResponseEntity.internalServerError()
-                        .body("발견된 파일은 이미지 파일이 아닙니다.");
-            }
-            headers.setContentType(contentType);
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(fileData);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            if (filePath != null) { return ResponseEntity.ok().body(filePath); }
+            else { return ResponseEntity.notFound().build(); }
     }
 
     // 게시글 수정하기
+    @Operation(summary = "게시물 수정", description = "게시물 수정을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "postNo", description = "수정할 게시물 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "title",description = "게시물 제목을 작성하세요", example = "제목입니다.", required = true),
+            @Parameter(name = "text",description = "게시물 내용을 작성하세요", example = "내용입니다.", required = true),
+            @Parameter(name = "newImage",description = "프로필 사진 경로를 작성하세요")
+    })
      @PutMapping("/update-post/{postNo}")
      public ResponseEntity<?> updatePost(
              @PathVariable Long postNo,
@@ -135,6 +137,8 @@ public class BoardPostController {
      }
 
     // 게시글 삭제하기
+    @Operation(summary = "게시물 삭제", description = "게시물 삭제를 담당하는 메서드 입니다.")
+    @Parameter(name = "postNo", description = "해당 게시물의 번호를 작성하세요.", example = "1", required = true)
     @DeleteMapping("/delete-post/{postNo}")
     public ResponseEntity<?> deletePost(@PathVariable("postNo") Long postNo) {
         try {
@@ -146,6 +150,12 @@ public class BoardPostController {
     }
 
     // 게시글 댓글 작성하기
+    @Operation(summary = "게시물 댓글 작성", description = "게시물 댓글 작성을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "postNo", description = "작성할 게시물 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "text",description = "게시물 내용을 작성하세요", example = "내용입니다.", required = true)
+    })
     @PostMapping("/post/{postNo}/comments")
     public ResponseEntity<?> createPostComment(@RequestBody BoardComRequestDTO requestDTO) {
         try {
@@ -157,6 +167,8 @@ public class BoardPostController {
     }
 
     // 게시글 댓글 조회하기
+    @Operation(summary = "게시물 댓글 조회", description = "게시물 댓글 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "postNo", description = "해당 게시물의 번호를 작성하세요.", example = "1", required = true)
     @GetMapping("/post/{postNo}/comments")
     public ResponseEntity<?> getPostComments(@PathVariable("postNo") Long postNo) {
         try {
@@ -173,6 +185,12 @@ public class BoardPostController {
 
     // 게시글 댓글 수정하기
     // 댓글 수정
+    @Operation(summary = "게시물 댓글 수정", description = "게시물 댓글 수정을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "postNo", description = "작성할 게시물 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "text",description = "게시물 내용을 작성하세요", example = "내용입니다.", required = true)
+    })
     @PutMapping("/post/{postNo}/comments/{commentNo}")
     public ResponseEntity<?> updatePostComment(@RequestBody BoardComRequestDTO requestDTO) {
         try {
@@ -185,6 +203,11 @@ public class BoardPostController {
 
     // 게시글 댓글 삭제하기
     // 댓글 삭제
+    @Operation(summary = "게시물 댓글 수정", description = "게시물 댓글 수정을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "postNo", description = "해당 게시물 고유 번호를 작성하세요"),
+            @Parameter(name = "commentNo", description = "회원 고유 번호를 작성하세요", example = "1", required = true),
+    })
     @DeleteMapping("/post/{postNo}/comments/{commentNo}")
     public ResponseEntity<?> deletePostComment(
             @PathVariable("postNo") Long postNo,
