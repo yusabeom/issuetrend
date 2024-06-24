@@ -34,7 +34,7 @@ public class ArticleDetailResponseDTO {
     public ArticleDetailResponseDTO(Article article) {
         this.articleCode = article.getArticleCode();
         this.title = article.getTitle();
-        this.shortTitle = (article.getTitle()).substring(0, 10) + "...";
+        this.shortTitle = shortTitle(article.getTitle());
         this.text = article.getText();
         this.createdDate = article.getCreatedDate();
         this.newsAgency = article.getNewsAgency();
@@ -90,6 +90,14 @@ public class ArticleDetailResponseDTO {
             } else {
                 return createdDate.format(formatter);
             }
+    }
+
+    // shortTitle 10글자 미만 메서드
+    private String shortTitle(String title) {
+        if (title.length() <= 10) {
+            return title;
+        }
+        return title.substring(0, 10) + "...";
     }
 
 }
