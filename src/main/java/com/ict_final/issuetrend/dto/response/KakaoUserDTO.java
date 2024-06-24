@@ -26,7 +26,7 @@ public class KakaoUserDTO {
     @Setter @Getter
     @ToString
     public static class KakaoAccount {
-
+        private String userNo;
         private String email;
         private Profile profile;
 
@@ -41,6 +41,7 @@ public class KakaoUserDTO {
     }
     public User toEntity(String accessToken) {
         return User.builder()
+                .userNo(this.userNo)
                 .email(this.kakaoAccount.email)
                 .nickname(this.kakaoAccount.profile.nickname)
                 .password("password!")

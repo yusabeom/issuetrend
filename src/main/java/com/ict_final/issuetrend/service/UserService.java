@@ -45,7 +45,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-
+    private final S3Service s3Service;
     @Value("${kakao.client_id}")
     private String KAKAO_CLIENT_ID;
     @Value("${kakao.redirect_url}")
@@ -72,16 +72,16 @@ public class UserService {
 
     public String uploadProfileImage(MultipartFile profileImage) throws IOException {
         // 루트 디렉토리가 실존하는 지 확인 후 존재하지 않으면 생성.
-        File rootDir = new File(uploadRootPath);
-        if (!rootDir.exists()) rootDir.mkdirs();
+     //   File rootDir = new File(uploadRootPath);
+     //   if (!rootDir.exists()) rootDir.mkdirs();
         // 파일명을 유니크하게 변경 (이름 충돌 가능성을 대비)
         // UUID와 원본파일명을 결합
         String uniqueFileName
                 = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
         // 파일 저장
-        File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
-        profileImage.transferTo(uploadFile);
-        return uniqueFileName;
+     //   File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
+      //  profileImage.transferTo(uploadFile);
+        return s3Service.uploadToS3Bucket(profileImage.getBytes(), uniqueFileName);
     }
 
     @Transactional
@@ -244,12 +244,13 @@ public class UserService {
     public String findProfilePath(Long UserNo) {
         User user
                 = userRepository.findByUserNo(UserNo).orElseThrow(() -> new RuntimeException());
-        String profileImage = user.getProfileImage();
-        if (profileImage.startsWith("http://")) {
-            return profileImage;
-        }
+      return user.getProfileImage();
+       // String profileImage = user.getProfileImage();
+//        if (profileImage.startsWith("http://")) {
+//            return profileImage;
+//        }
         // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
-        return uploadRootPath + "/" + profileImage;
+       // return uploadRootPath + "/" + profileImage;
     }
     public String renewalAccessToken(Map<String, String> tokenRequest) {
         String refreshToken = tokenRequest.get("refreshToken");
