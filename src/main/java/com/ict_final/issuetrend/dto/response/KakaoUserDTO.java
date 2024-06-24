@@ -2,6 +2,7 @@ package com.ict_final.issuetrend.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ict_final.issuetrend.entity.LoginPath;
 import com.ict_final.issuetrend.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +33,7 @@ public class KakaoUserDTO {
         @Getter @Setter
         @ToString
         public static class Profile {
+            private String nickname;
 
             @JsonProperty("profile_image_url")
             private String profileImageUrl;
@@ -40,8 +42,11 @@ public class KakaoUserDTO {
     public User toEntity(String accessToken) {
         return User.builder()
                 .email(this.kakaoAccount.email)
+                .nickname(this.kakaoAccount.profile.nickname)
                 .password("password!")
                 .profileImage(this.kakaoAccount.profile.profileImageUrl)
+                .regionName("서울")
+                .loginPath(LoginPath.KAKAO)
                 .accessToken(accessToken)
                 .build();
     }
