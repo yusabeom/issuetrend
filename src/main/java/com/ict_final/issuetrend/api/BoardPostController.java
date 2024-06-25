@@ -203,7 +203,7 @@ public class BoardPostController {
 
     // 게시글 댓글 삭제하기
     // 댓글 삭제
-    @Operation(summary = "게시물 댓글 수정", description = "게시물 댓글 수정을 담당하는 메서드 입니다.")
+    @Operation(summary = "게시물 댓글 삭제", description = "게시물 댓글 삭제를 담당하는 메서드 입니다.")
     @Parameters({
             @Parameter(name = "postNo", description = "해당 게시물 고유 번호를 작성하세요"),
             @Parameter(name = "commentNo", description = "회원 고유 번호를 작성하세요", example = "1", required = true),

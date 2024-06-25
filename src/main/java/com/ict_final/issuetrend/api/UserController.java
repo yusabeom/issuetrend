@@ -6,6 +6,8 @@ import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
 import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
+import com.ict_final.issuetrend.entity.User;
+import com.ict_final.issuetrend.repository.UserRepository;
 import com.ict_final.issuetrend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ import java.util.Map;
 @RequestMapping("/issue-trend")
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
     // 이메일 중복 확인 요청 처리
     @GetMapping("/check")
     public ResponseEntity<?> check(String email) {
@@ -214,5 +217,12 @@ public class UserController {
         } else {
             return new ResponseEntity<>("가입 정보가 없습니다", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // 닉네임으로 유저 정보 찾기
+    @GetMapping("/find-user")
+    public ResponseEntity<?> findUser(String nickname) {
+        User user = userRepository.findByUserNickname(nickname).orElseThrow();
+        return ResponseEntity.ok().body(user);
     }
 }
