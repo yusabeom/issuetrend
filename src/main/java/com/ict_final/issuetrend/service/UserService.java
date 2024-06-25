@@ -409,4 +409,13 @@ public class UserService {
             return true;
         } else return false;
     }
+    // 유저의 패스워드가 맞는지 확인하는 로직
+    public boolean isMatch(String userEmail, String checkPw) {
+        log.info("userEmail, checkPw: {} {}", userEmail, checkPw);
+
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("존재하지 않는 아이디 입니다."));
+
+        String encodedPassword = user.getPassword();
+        return passwordEncoder.matches(checkPw, encodedPassword);
+    }
 }
