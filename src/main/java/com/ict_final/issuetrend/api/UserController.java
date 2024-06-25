@@ -3,7 +3,6 @@ package com.ict_final.issuetrend.api;
 import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
-import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.NickResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
@@ -17,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -37,6 +34,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
+
     // 이메일 중복 확인 요청 처리
     @GetMapping("/check")
     public ResponseEntity<?> check(String email) {
@@ -49,8 +47,9 @@ public class UserController {
         log.info("Email duplication check result: {}", resultFlag);
         return ResponseEntity.ok().body(resultFlag);
     }
+
     @GetMapping("nick-check")
-    public ResponseEntity<?> nickCheck(String nickname){
+    public ResponseEntity<?> nickCheck(String nickname) {
         if (nickname.trim().isEmpty()) {
             return ResponseEntity.badRequest()
                     .body("닉네임이 존재하지 않습니다.");
@@ -59,6 +58,7 @@ public class UserController {
         log.info("nick nickDuplicate check result: {}", nickDuplicate);
         return ResponseEntity.ok().body(nickDuplicate);
     }
+
     // 회원가입 요청 처리
     @PostMapping
     public ResponseEntity<?> signUp(
@@ -101,22 +101,24 @@ public class UserController {
 
 
     @GetMapping("/kakaologin")
-    public ResponseEntity<?> kakaoLogin( String code) {
+    public ResponseEntity<?> kakaoLogin(String code) {
         log.info("/api/auth/kakaoLogin - GET! code: {}", code);
         LoginResponseDTO responseDTO = userService.kakaoService(code);
 
         return ResponseEntity.ok().body(responseDTO);
     }
+
     @GetMapping("/logout")
     public ResponseEntity<?> logout(
             @AuthenticationPrincipal TokenUserInfo userInfo
-            ){
+    ) {
         log.info("/api/auth/logout - GET! - user: {}", userInfo.getEmail());
         String result = userService.logout(userInfo);
         return ResponseEntity.ok().body(result);
     }
+
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody Map<String, String> tokenRequest){
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> tokenRequest) {
         log.info("/api/auth/refresh: POST! - tokenRequest: {}", tokenRequest);
         String renewalAccessToken = userService.renewalAccessToken(tokenRequest);
         if (renewalAccessToken != null) {
@@ -124,6 +126,7 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
+
     // 프로필 사진 이미지 데이터를 클라이언트에게 응답 처리
     @GetMapping("/load-profile")
     public ResponseEntity<?> loadFile(
@@ -174,6 +177,7 @@ public class UserController {
      //       throw new RuntimeException(e);
       //  }
     }
+
     public static MediaType findExtensionAndGetMediaType(String filePath) {
 
         // 파일 경로에서 확장자 추출
@@ -183,7 +187,8 @@ public class UserController {
 
         // 추출한 확장자를 바탕으로 MediaType을 설정 -> Header에 들어갈 Content-type이 됨.
         switch (ext.toUpperCase()) {
-            case "JPG": case "JPEG":
+            case "JPG":
+            case "JPEG":
                 return MediaType.IMAGE_JPEG;
             case "PNG":
                 return MediaType.IMAGE_PNG;
@@ -193,6 +198,7 @@ public class UserController {
                 return null;
         }
     }
+
     // BindingResult 에서 유효성 검사 오류가 있는지 확인
     private static ResponseEntity<FieldError> getFieldErrorResponseEntity(BindingResult result) {
         if (result.hasErrors()) {
@@ -209,7 +215,7 @@ public class UserController {
 
         if (userService.isDuplicate(email)) {
             try {
-                userService.sendEmail(email);
+                userService.sendNewPassword(email);
                 return new ResponseEntity<>("Email sent successfully!", HttpStatus.OK);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -227,4 +233,10 @@ public class UserController {
         NickResponseDTO nickResponseDTO = new NickResponseDTO(user);
         return ResponseEntity.ok().body(nickResponseDTO);
     }
+
+//    @GetMapping("/send-newsletter")
+//    public ResponseEntity<?> sendNewsLetter() {
+//        userService.sendNewsLetter();
+//        return null;
+//    }
 }
