@@ -14,11 +14,13 @@ public class NickResponseDTO {
     private String nickname;
     private String email;
     private String regionName;
+    private String profileImage;
 
     public NickResponseDTO(User user) {
         this.userNo = user.getUserNo();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.regionName = user.getRegionName();
+        this.profileImage = user.getProfileImage();
     }
 }
