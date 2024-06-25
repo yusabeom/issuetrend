@@ -5,6 +5,7 @@ import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
 import com.ict_final.issuetrend.dto.response.KakaoLoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
+import com.ict_final.issuetrend.dto.response.NickResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.UserRepository;
@@ -223,6 +224,7 @@ public class UserController {
     @GetMapping("/find-user")
     public ResponseEntity<?> findUser(String nickname) {
         User user = userRepository.findByUserNickname(nickname).orElseThrow();
-        return ResponseEntity.ok().body(user);
+        NickResponseDTO nickResponseDTO = new NickResponseDTO(user);
+        return ResponseEntity.ok().body(nickResponseDTO);
     }
 }
