@@ -28,7 +28,8 @@ public interface ArticleRepository extends JpaRepository<Article, String> {
     List<Article> findArticleByRegion(@Param("region") String region);
 
     // 키워드로 검색하기
-    @Query("SELECT DISTINCT a FROM Article a WHERE a.text LIKE %:keyword%")
+//    @Query("SELECT DISTINCT a FROM Article a WHERE a.text LIKE %:keyword%")
+    @Query("SELECT DISTINCT a FROM Article a JOIN a.keywords k WHERE k.keyword LIKE :keyword")
     List<Article> findArticlesByKeyword(@Param("keyword") String keyword);
 
     // 기사 코드로 기사 상세 조회

@@ -7,8 +7,12 @@ import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
 import com.ict_final.issuetrend.dto.response.KakaoUserDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
+import com.ict_final.issuetrend.entity.Article;
+import com.ict_final.issuetrend.entity.FavoriteKeyword;
 import com.ict_final.issuetrend.entity.LoginPath;
 import com.ict_final.issuetrend.entity.User;
+import com.ict_final.issuetrend.repository.ArticleRepository;
+import com.ict_final.issuetrend.repository.FavoriteKeywordRepository;
 import com.ict_final.issuetrend.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -21,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +39,10 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.ict_final.issuetrend.util.ArticleSorter.sortArticlesByCreatedDate;
 
 @Service
 @Slf4j
@@ -43,6 +50,8 @@ import java.util.*;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final FavoriteKeywordRepository favoriteKeywordRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final S3Service s3Service;
@@ -72,15 +81,15 @@ public class UserService {
 
     public String uploadProfileImage(MultipartFile profileImage) throws IOException {
         // 루트 디렉토리가 실존하는 지 확인 후 존재하지 않으면 생성.
-     //   File rootDir = new File(uploadRootPath);
-     //   if (!rootDir.exists()) rootDir.mkdirs();
+        //   File rootDir = new File(uploadRootPath);
+        //   if (!rootDir.exists()) rootDir.mkdirs();
         // 파일명을 유니크하게 변경 (이름 충돌 가능성을 대비)
         // UUID와 원본파일명을 결합
         String uniqueFileName
                 = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
         // 파일 저장
-     //   File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
-      //  profileImage.transferTo(uploadFile);
+        //   File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
+        //  profileImage.transferTo(uploadFile);
         return s3Service.uploadToS3Bucket(profileImage.getBytes(), uniqueFileName);
     }
 
@@ -92,7 +101,7 @@ public class UserService {
             throw new RuntimeException("중복된 이메일 입니다.");
         }
         String nickname = dto.getNickname();
-        if (nickDuplicate(nickname)){
+        if (nickDuplicate(nickname)) {
             throw new RuntimeException("중복된 닉네임 입니다.");
         }
         // 패스워드 인코딩
@@ -122,6 +131,7 @@ public class UserService {
         userRepository.save(user);
         return new LoginResponseDTO(user, token);
     }
+
     private Map<String, String> getTokenMap(User user) {
         String accessToken = tokenProvider.createAccessKey(user);
         String refreshToken = tokenProvider.createRefreshKey(user);
@@ -146,7 +156,6 @@ public class UserService {
         // -> 화면단에서는 적절한 url을 선택하여 redirect를 진행.
 
 
-
         if (!isDuplicate(userDTO.getKakaoAccount().getEmail())) {
             // 이메일이 중복되지 않았다. -> 이전에 로그인 한 적 없음 -> DB에 데이터를 세팅
             User saved = userRepository.save(userDTO.toEntity(accessToken));
@@ -165,6 +174,7 @@ public class UserService {
 
         return new LoginResponseDTO(foundUser, token);
     }
+
     private KakaoUserDTO getKakaoUserInfo(String accessToken) {
         // 요청 uri
         String requestURI = "https://kapi.kakao.com/v2/user/me";
@@ -185,6 +195,7 @@ public class UserService {
 
         return responseData;
     }
+
     private String getKakaoAccessToken(String code) {
 
         // 요청 uri
@@ -241,17 +252,19 @@ public class UserService {
         }
         return null;
     }
+
     public String findProfilePath(Long UserNo) {
         User user
                 = userRepository.findByUserNo(UserNo).orElseThrow(() -> new RuntimeException());
-      return user.getProfileImage();
-       // String profileImage = user.getProfileImage();
+        return user.getProfileImage();
+        // String profileImage = user.getProfileImage();
 //        if (profileImage.startsWith("http://")) {
 //            return profileImage;
 //        }
         // DB에는 파일명만 저장. -> service가 가지고 있는 Root Path와 연결해서 리턴
-       // return uploadRootPath + "/" + profileImage;
+        // return uploadRootPath + "/" + profileImage;
     }
+
     public String renewalAccessToken(Map<String, String> tokenRequest) {
         String refreshToken = tokenRequest.get("refreshToken");
         boolean isValid = tokenProvider.validateRefreshToken(refreshToken);
@@ -268,7 +281,7 @@ public class UserService {
         return null;
     }
 
-    public void sendEmail(String email) throws Exception {
+    public void sendNewPassword(String email) throws Exception {
         String tempPassword = generateTemporaryPassword();
         updatePasswordByEmail(email, tempPassword);
         String htmlBody = mailWithTemplate(tempPassword);
@@ -291,7 +304,6 @@ public class UserService {
         Context thymeleafContext = new Context();
         thymeleafContext.setVariables(templateModel);
 
-        // Process the template
         return templateEngine.process("mail-templates", thymeleafContext);
 
     }
@@ -317,6 +329,78 @@ public class UserService {
         }
 
         return password.toString();
+    }
+
+
+    // 뉴스레터
+    @Scheduled(cron = "0 0 9 * * ?")    // 매일 아침 9시에 전송
+    public void sendNewsLetter() {
+        // 모든 사용자 정보 가져오기 (뉴스레터 유료화 진행시 유료회원만)
+        List<User> users = userRepository.findAll();
+
+        // 사용자마다 관심 있는 키워드 관련 기사 3개 가져오기
+        for (User user : users) {
+            List<FavoriteKeyword> keywords = favoriteKeywordRepository.findByUser_UserNo(user.getUserNo());
+            log.info("keywords : {}", keywords);
+
+            List<Article> articlesByKeyword = new ArrayList<>();
+            for (FavoriteKeyword keyword : keywords) {
+                List<Article> articles = articleRepository.findArticlesByKeyword(keyword.getFavoriteKeyword());
+
+                articlesByKeyword.addAll(articles);
+            }
+
+            if (articlesByKeyword.size() >= 3) {
+                // 3개 이상의 기사가 있을 경우만 메일 보내기
+                sortArticlesByCreatedDate(articlesByKeyword);
+                try {
+                    sendEmail(user.getEmail(), articlesByKeyword.subList(0, 3));
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            } else return;
+        }
+    }
+
+    private void sendEmail(String email, List<Article> articlesByKeyword) throws MessagingException {
+        String htmlBody = newsLetterWithTemplate(email, articlesByKeyword);
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setFrom(username);
+        helper.setTo(email);
+        helper.setSubject("[issueTrend] 오늘의 관심 기사");
+        helper.setText(htmlBody, true);
+        helper.addInline("logo", new ClassPathResource("static/logo.png"));
+        javaMailSender.send(mimeMessage);
+    }
+
+    public String newsLetterWithTemplate(String email, List<Article> articlesByKeyword) throws MessagingException {
+        HashMap<String, Object> templateModel = new HashMap<>();
+
+        templateModel.put("userName", email);
+
+        AtomicInteger index = new AtomicInteger(1);
+        articlesByKeyword.forEach(article -> {
+                    int currentIndex = index.getAndIncrement();
+                    templateModel.put("articleTitle" + currentIndex, article.getTitle());
+                    templateModel.put("articleText" + currentIndex, textResize(article.getText()));
+                    templateModel.put("articleLink" + currentIndex, article.getArticleLink());
+                    templateModel.put("articleImage" + currentIndex, article.getImg());
+                }
+        );
+
+        Context thymeleafContext = new Context();
+        thymeleafContext.setVariables(templateModel);
+
+        return templateEngine.process("newsLetter-templates", thymeleafContext);
+
+    }
+
+    public String textResize(String text) {
+        if (text.length() > 100) return text.substring(0, 100) + "...";
+        else return text;
     }
 
     public boolean nickDuplicate(String nickname) {

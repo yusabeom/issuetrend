@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@ToString
+@ToString(exclude = "keywords")
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
