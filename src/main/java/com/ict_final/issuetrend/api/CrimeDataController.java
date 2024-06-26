@@ -24,6 +24,7 @@ public class CrimeDataController {
 
     @GetMapping("/api/crime")
     public ResponseEntity<?> getCrimeData(@RequestParam("region") String region) {
+        log.info("crimeData GetMapping request!");
 
         List<CrimeDataResponseDTO> crimeData = crimeDataService.getCrimeData(region);
 
