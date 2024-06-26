@@ -32,6 +32,7 @@ public class ArticleService {
     }
 
     public List<Article> getTodayArticleByRegion(String region) {
+        System.out.println("지역기사 가져오기 서비스");
         return articleRepository.findArticleByRegion(region);
 //        return articleRepository.findArticleByRegion(region, date);
     }
