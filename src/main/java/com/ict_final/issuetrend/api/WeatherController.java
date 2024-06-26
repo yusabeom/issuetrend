@@ -31,6 +31,6 @@ public class WeatherController {
     @GetMapping("/weather")
     public ResponseEntity<?> apiRequest() throws IOException {
         String json = String.valueOf(weatherService.getShortTermForecast()); // 날씨 정보를 JSON 문자열로 반환
-        return ResponseEntity.ok(json);
+        return ResponseEntity.ok().body(json);
     }
 }
