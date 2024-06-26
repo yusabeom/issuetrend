@@ -27,14 +27,14 @@ public class ArticleService {
     LocalDate date = LocalDate.now().minusDays(1);
 
     public List<Article> getTodayArticles() {
-//        return articleRepository.findArticleByDate(date);
-        return articleRepository.findArticleByDate();
+        return articleRepository.findArticleByDate(date);
+//        return articleRepository.findArticleByDate();
     }
 
     public List<Article> getTodayArticleByRegion(String region) {
         System.out.println("지역기사 가져오기 서비스");
-        return articleRepository.findArticleByRegion(region);
-//        return articleRepository.findArticleByRegion(region, date);
+//        return articleRepository.findArticleByRegion(region);
+        return articleRepository.findArticleByRegion(region, date);
     }
 
     public List<Article> searchArticles(String keyword) {
