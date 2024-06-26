@@ -228,7 +228,7 @@ public class UserController {
 
     // 닉네임으로 유저 정보 찾기
     @GetMapping("/find-user")
-    public ResponseEntity<?> findUser(String nickname) {
+    public ResponseEntity<?> findUser(@RequestParam("nickname") String nickname) {
         User user = userRepository.findByUserNickname(nickname).orElseThrow();
         NickResponseDTO nickResponseDTO = new NickResponseDTO(user);
         return ResponseEntity.ok().body(nickResponseDTO);
