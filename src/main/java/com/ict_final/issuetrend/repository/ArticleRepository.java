@@ -13,19 +13,19 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, String> {
 
     // 오늘 기사 모두 가져오기
-//    @Query("SELECT a FROM Article a " +
-//            "WHERE FUNCTION('DATE', a.createdDate) = :yesterdayDate")
-//    List<Article> findArticleByDate(@Param("yesterdayDate") LocalDate yesterdayDate);
-    @Query("SELECT a FROM Article a")
-    List<Article> findArticleByDate();
+    @Query("SELECT a FROM Article a " +
+            "WHERE FUNCTION('DATE', a.createdDate) = :yesterdayDate")
+    List<Article> findArticleByDate(@Param("yesterdayDate") LocalDate yesterdayDate);
+//    @Query("SELECT a FROM Article a")
+//    List<Article> findArticleByDate();
 
 
     // 지역별 오늘 기사 모두 가져오기
-//    @Query("SELECT DISTINCT a FROM Article a JOIN a.keywords k " +
-//            "WHERE k.keyword LIKE :region AND DATE(a.createdDate) = :yesterdayDate")
-//    List<Article> findArticleByRegion(@Param("region") String region, @Param("yesterdayDate") LocalDate yesterdayDate);
-    @Query("SELECT DISTINCT a FROM Article a JOIN a.keywords k WHERE k.keyword LIKE :region")
-    List<Article> findArticleByRegion(@Param("region") String region);
+    @Query("SELECT DISTINCT a FROM Article a JOIN a.keywords k " +
+            "WHERE k.keyword LIKE :region AND DATE(a.createdDate) = :yesterdayDate")
+    List<Article> findArticleByRegion(@Param("region") String region, @Param("yesterdayDate") LocalDate yesterdayDate);
+//    @Query("SELECT DISTINCT a FROM Article a JOIN a.keywords k WHERE k.keyword LIKE :region")
+//    List<Article> findArticleByRegion(@Param("region") String region);
 
     // 키워드로 검색하기
 //    @Query("SELECT DISTINCT a FROM Article a WHERE a.text LIKE %:keyword%")

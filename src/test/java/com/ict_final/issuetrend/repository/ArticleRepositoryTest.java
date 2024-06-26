@@ -23,8 +23,8 @@ class ArticleRepositoryTest {
 
     @Test
     public void findArticleByDate() {
-//        List<Article> articleByDate = repository.findArticleByDate(LocalDate.now().minusDays(1));
-        List<Article> articleByDate = repository.findArticleByDate();
+        List<Article> articleByDate = repository.findArticleByDate(LocalDate.now().minusDays(1));
+//        List<Article> articleByDate = repository.findArticleByDate();
 
         for (Article article : articleByDate) {
             System.out.println("기사 코드 = " + article.getArticleCode());
@@ -33,8 +33,8 @@ class ArticleRepositoryTest {
 
     @Test
     public void findArticleByRegion() {
-//        List<Article> articleByRegion = repository.findArticleByRegion("서울%", LocalDate.now().minusDays(1));
-        List<Article> articleByRegion = repository.findArticleByRegion("서울%");
+        List<Article> articleByRegion = repository.findArticleByRegion("서울%", LocalDate.now().minusDays(1));
+//        List<Article> articleByRegion = repository.findArticleByRegion("서울%");
 
         for (Article article : articleByRegion) {
             System.out.println("기사 제목 = " + article.getTitle());
