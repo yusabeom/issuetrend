@@ -59,6 +59,24 @@ public class UserController {
         return ResponseEntity.ok().body(nickDuplicate);
     }
 
+
+    // mypage 정보 변경하기 전 현재 비밀번호 한 번 더 검증
+    @PostMapping("/password-check")
+    public ResponseEntity<?> pwCheck(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                     @RequestBody Map<String, String> data) {
+        String userEmail = tokenUserInfo.getEmail();
+        String checkPw = data.get("password");
+
+        if(!userService.isDuplicate(userEmail)) {
+            return ResponseEntity.badRequest().body("사용자가 존재하지 않습니다.");
+        }
+        if(userService.isMatch(userEmail, checkPw)) {
+          return ResponseEntity.ok().body("비밀번호가 일치합니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
     // 회원가입 요청 처리
     @PostMapping
     public ResponseEntity<?> signUp(

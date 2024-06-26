@@ -1,9 +1,11 @@
 package com.ict_final.issuetrend.dto.response;
 
+import com.ict_final.issuetrend.entity.FavoriteKeyword;
 import com.ict_final.issuetrend.entity.LoginPath;
 import com.ict_final.issuetrend.entity.User;
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -19,6 +21,7 @@ public class LoginResponseDTO {
     private String profileImage;
     private String regionName;
     private String nickname;
+    private List<FavoriteKeyword> favoriteKeywords;
     private Map<String, String> token;
 
 
@@ -31,6 +34,7 @@ public class LoginResponseDTO {
             this.profileImage = user.getProfileImage();
             this.regionName = user.getRegionName();
             this.nickname = user.getNickname();
+            this.favoriteKeywords = user.getFavoriteKeywords();
             this.token = token;
         }
 

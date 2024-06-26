@@ -90,6 +90,7 @@ public class TokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        log.info("분해한 클래임즈: {}", claims);
         return claims;
     }
 
@@ -121,8 +122,10 @@ public class TokenProvider {
     public boolean validateRefreshToken(String token) {
         try {
             getClaims(token, REFRESH_SECRET_KEY);
+
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             log.warn("유효하지 않은 리프레시 토큰!");
             return false;
         }
