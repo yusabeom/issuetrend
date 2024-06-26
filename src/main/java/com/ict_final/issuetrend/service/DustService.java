@@ -60,6 +60,8 @@ public class DustService {
 
             conn.disconnect();
 
+//            log.info(sb.toString());
+
             String jsonString = sb.toString();
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
@@ -67,17 +69,17 @@ public class DustService {
             JSONObject body = (JSONObject) response.get("body");
             JSONArray itemArray = (JSONArray) body.get("items");
 
-            double totalPm25 = 0;
+            double totalPm10 = 0;
             int count = 0;
 
             for (Object obj : itemArray) {
                 JSONObject item = (JSONObject) obj;
                 String stationName = (String) item.get("sidoName");
 
-                String pm25ValueStr = (String) item.get("pm25Value");
-                if (pm25ValueStr != null && !pm25ValueStr.equals("-")) {
-                    double pm25Value = Double.parseDouble(pm25ValueStr);
-                    totalPm25 += pm25Value;
+                String pm10ValueStr = (String) item.get("pm10Value");
+                if (pm10ValueStr != null && !pm10ValueStr.equals("-")) {
+                    double pm10Value = Double.parseDouble(pm10ValueStr);
+                    totalPm10 += pm10Value;
                     count++;
                 }
             }
@@ -87,17 +89,17 @@ public class DustService {
                 dustInfo.put("average", "데이터 없음");
                 dustInfo.put("grade", "데이터 없음");
             } else {
-                double averagePm25 = totalPm25 / count;
-                String formattedAverage = String.format("%.2f", averagePm25);
+                double averagePm10 = totalPm10 / count;
+                String formattedAverage = String.format("%.2f", averagePm10);
 
                 log.info("지역 미세먼지 농도 평균: {}", formattedAverage);
 
                 String grade;
-                if (averagePm25 <= 15) {
+                if (averagePm10 <= 30) {
                     grade = "좋음";
-                } else if (averagePm25 <= 35) {
+                } else if (averagePm10 <= 80) {
                     grade = "보통";
-                } else if (averagePm25 <= 75) {
+                } else if (averagePm10 <= 150) {
                     grade = "나쁨";
                 } else {
                     grade = "매우 나쁨";
