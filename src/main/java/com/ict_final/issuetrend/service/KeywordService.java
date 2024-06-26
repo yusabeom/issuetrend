@@ -24,7 +24,7 @@ public class KeywordService {
     LocalDate date = LocalDate.now().minusDays(1);
 
     public List<KeywordsFrequencyResponseDTO> getTodayKeywordFrequency() {
-        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByDate();
+        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByDate(date);
         List<String> keywords = new ArrayList<>();
 
         for (KeyWords kw : keyWordsList) {
@@ -37,7 +37,7 @@ public class KeywordService {
     }
 
     public List<KeywordsFrequencyResponseDTO> getTodayKeywordByRegionFrequency(String region) {
-        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByRegion(region);
+        List<KeyWords> keyWordsList = keywordRepository.findKeyWordsByRegion(region, date);
         List<String> keywords = new ArrayList<>();
 
         for (KeyWords kw : keyWordsList) {

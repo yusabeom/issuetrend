@@ -56,10 +56,11 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
                 .authorizeHttpRequests(auth -> {
-                            auth.requestMatchers("/issue-trend/load-profile").authenticated();
                             properties.getPermitAllPatterns()
                                     .forEach(url -> auth.requestMatchers(url).permitAll());
                             // /issue-trend/** 엔드포인트에 대한 접근을 허용합니다.
+                            auth.requestMatchers("/issue-trend/load-profile").authenticated();
+                            auth.requestMatchers("/issue-trend/password-check").authenticated();
                             auth.anyRequest().authenticated(); // 그 외의 모든 요청은 인증 필요
                         }
 

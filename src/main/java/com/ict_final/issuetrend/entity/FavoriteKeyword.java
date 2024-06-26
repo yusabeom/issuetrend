@@ -14,7 +14,6 @@ import lombok.*;
 @Entity
 @JsonIgnoreProperties("user")
 @Table(name = "tbl_favorite_keyword")
-
 public class FavoriteKeyword {
 
     //키워드 번호
