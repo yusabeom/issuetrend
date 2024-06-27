@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {
@@ -19,6 +20,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u From User u WHERE u.nickname = :nickname")
     Optional<User> findByUserNickname(String nickname);
+
+    @Query("SELECT u From User u WHERE u.isSubscribed = true")
+    List<User> findBySubscribed();
+
 
 //    @Query()
 //    void updatePassword(@Param("email") String email, @Param("tempPassword")String tempPassword);

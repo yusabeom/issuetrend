@@ -335,11 +335,12 @@ public class UserService {
     // 뉴스레터
     @Scheduled(cron = "0 0 9 * * ?")    // 매일 아침 9시에 전송
     public void sendNewsLetter() {
-        // 모든 사용자 정보 가져오기 (뉴스레터 유료화 진행시 유료회원만)
-        List<User> users = userRepository.findAll();
+        // 구독한 사용자 정보 가져오기
+        List<User> subscribedUsers = userRepository.findBySubscribed();
+        subscribedUsers.forEach(user -> log.info("구독 유저 : {}", user.getUserNo()));
 
         // 사용자마다 관심 있는 키워드 관련 기사 3개 가져오기
-        for (User user : users) {
+        for (User user : subscribedUsers) {
             List<FavoriteKeyword> keywords = favoriteKeywordRepository.findByUser_UserNo(user.getUserNo());
             log.info("keywords : {}", keywords);
 
