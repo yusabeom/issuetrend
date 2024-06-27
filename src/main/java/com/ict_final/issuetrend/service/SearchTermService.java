@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,12 @@ public class SearchTermService {
 
         List<String> popularList = searchTermList.stream()
                 .map(SearchTerm::getSearchTerm)
-                .collect(Collectors.toList()).subList(0,5);
+                .collect(Collectors.toList());
+
+        if (searchTermList.size() >= 5) {
+            popularList = popularList.subList(0,5);
+
+        }
 
         System.out.println("popularList = " + popularList);
         return popularList;
