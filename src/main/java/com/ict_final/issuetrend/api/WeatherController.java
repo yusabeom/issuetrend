@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.dto.response.ForecastItemResponseDTO;
 import com.ict_final.issuetrend.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/issue-trend")
@@ -22,7 +23,7 @@ public class WeatherController {
     @GetMapping("/weather")
     public ResponseEntity<?> getWeatherData() {
         try {
-            Map<String, String> weatherData = weatherService.getShortTermForecast(); // 날씨 정보를 Map 형태로 반환
+            List<ForecastItemResponseDTO> weatherData = weatherService.getShortTermForecast(); // 날씨 정보를 List<ForecastItemResponseDTO> 형태로 반환
             return ResponseEntity.ok(weatherData);
         } catch (IOException e) {
             log.error("Error retrieving weather data", e);
