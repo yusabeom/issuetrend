@@ -9,6 +9,8 @@ import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
 import com.ict_final.issuetrend.entity.User;
 import com.ict_final.issuetrend.repository.UserRepository;
 import com.ict_final.issuetrend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -228,6 +230,8 @@ public class UserController {
     }
 
 
+    @Operation(summary = "새로운 비밀번호 전송", description = "새로운 비밀번호를 생성하여 요청받은 이메일로 보내는 메서드 입니다.")
+    @Parameter(name = "email", description = "가입할 때 작성한 이메일을 입력하세요.", example = "aaa1234@gmail.com", required = true)
     @GetMapping("/send-password")
     public ResponseEntity<?> sendEmail(@RequestParam String email) {
 
@@ -252,6 +256,7 @@ public class UserController {
         return ResponseEntity.ok().body(nickResponseDTO);
     }
 
+//    뉴스레터 확인용 (실제 사용 X)
 //    @GetMapping("/send-newsletter")
 //    public ResponseEntity<?> sendNewsLetter() {
 //        userService.sendNewsLetter();
