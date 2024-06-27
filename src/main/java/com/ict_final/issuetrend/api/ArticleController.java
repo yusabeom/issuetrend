@@ -13,6 +13,10 @@ import com.ict_final.issuetrend.service.ArticleCommentsService;
 import com.ict_final.issuetrend.service.ArticleService;
 import com.ict_final.issuetrend.service.KeywordService;
 import com.ict_final.issuetrend.service.SearchTermService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Tag(name = "Article API", description = "기사 조회와 기사별 댓글 작성 및 수정, 삭제 api 입니다.")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -36,6 +41,7 @@ public class ArticleController {
     private final SearchTermService searchTermService;
 
     // 오늘 기사 가져오기
+    @Operation(summary = "오늘 기사 가져오기", description = "당일 기사 조회를 담당하는 메서드 입니다.")
     @GetMapping("/todayArticles")
     public ResponseEntity<?> todayArticles() {
         log.info("todayArticles GetMapping request!");
@@ -57,6 +63,7 @@ public class ArticleController {
     }
 
     // 오늘 기사의 키워드별 개수
+    @Operation(summary = "당일 기사 키워드별 개수 조회", description = "당일 기사 키워드별 개수 조회를 담당하는 메서드 입니다.")
     @GetMapping("/todayKeywordsFrequency")
     public ResponseEntity<?> todayKeywordsFrequency() {
         log.info("todayKeywords GetMapping request!");
@@ -74,6 +81,8 @@ public class ArticleController {
 
 
     // 지역별 기사 가져오기
+    @Operation(summary = "지역별 기사 조회", description = "지역별 기사 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "region", description = "지역 이름을 작성하세요", example = "서울", required = true)
     @PostMapping("/todayArticles")
     public ResponseEntity<?> todayArticleByReigion(@RequestBody RegionRequestDTO requestDTO){
         log.info("todayArticles GetMapping request! region : {}", requestDTO.getRegion());
@@ -95,6 +104,8 @@ public class ArticleController {
     }
 
     // 지역별 기사의 키워드별 개수
+    @Operation(summary = "지역별 기사 키워드개수 조회", description = "지역별 기사 키워드개수 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "region", description = "지역 이름을 작성하세요", example = "서울", required = true)
     @PostMapping("/todayKeywordsFrequency")
     public ResponseEntity<?> todayKeywordsByRegionFrequency(@RequestBody RegionRequestDTO requestDTO) {
         log.info("todayKeywords GetMapping request! region : {}", requestDTO.getRegion());
@@ -111,6 +122,8 @@ public class ArticleController {
     }
 
     // 키워드로 기사 검색하기
+    @Operation(summary = "키워드로 기사 조회", description = "키워드로 기사 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "keyword", description = "키워드를 작성하세요", example = "경찰청", required = true)
     @GetMapping("/search")
     public ResponseEntity<?> searchArticles(@RequestParam("keyword") String keyword) {
         log.info("Searching articles for keyword: {}", keyword);
@@ -150,6 +163,13 @@ public class ArticleController {
     }
 
     // 기사 필터링 검색
+    @Operation(summary = "기사 필터링", description = "필터링한 기사 조회를 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "region", description = "지역 이름을 작성하세요", example = "부산"),
+            @Parameter(name = "newsAgency",description = "신문사 이름을 작성하세요", example = "동아일보"),
+            @Parameter(name = "sortOption",description = "정렬 기준을 작성하세요", example = "최신순 or 댓글순"),
+            @Parameter(name = "keyword",description = "키워드를 작성하세요")
+    })
     @PostMapping("/filterArticles")
     public ResponseEntity<?> filterArticles(@RequestBody ArticleFilterRequestDTO filterRequestDTO) {
         log.info("Filtering articles with request: {}", filterRequestDTO);
@@ -177,6 +197,8 @@ public class ArticleController {
     }
 
     // 기사별 상세 페이지 (특정 기사 조회)
+    @Operation(summary = "특정 기사 조회", description = "기사 고유 번호에 해당하는 기사 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "articleCode", description = "기사 고유 코드를 작성하세요", example = "1", required = true)
     @GetMapping("/articles/{articleCode}")
     public ResponseEntity<?> getArticleDetail(@PathVariable("articleCode") String articleCode) {
         log.info("Fetching article with code: {}", articleCode);
@@ -200,6 +222,12 @@ public class ArticleController {
     }
 
     // 기사별 댓글 작성
+    @Operation(summary = "기사 댓글 작성", description = "기사별 댓글 작성을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요", example = "2", required = true),
+            @Parameter(name = "articleCode",description = "기사 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "text",description = "댓글 내용을 작성하세요", example = "댓글본문입니다.", required = true),
+    })
     @PostMapping("/articles/{articleCode}/comments")
     private ResponseEntity<?> createCommentByArticle(@RequestBody ArtComRequestDTO requestDTO) {
         try {
@@ -212,6 +240,8 @@ public class ArticleController {
     }
 
     // 기사별 댓글 전체조회
+    @Operation(summary = "기사별 댓글 전체 조회", description = "기사별 댓글 전체 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "articleCode", description = "기사 고유 코드를 작성하세요", example = "1", required = true)
     @GetMapping("/articles/{articleCode}/comments")
     private ResponseEntity<?> getCommentByArticle(@PathVariable("articleCode") String articleCode) {
         try {
@@ -228,6 +258,12 @@ public class ArticleController {
     }
 
     // 기사별 댓글 수정
+    @Operation(summary = "기사 댓글 수정", description = "기사별 댓글 수정을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "commentNo", description = "댓글 고유 번호를 작성하세요", example = "2", required = true),
+            @Parameter(name = "articleCode",description = "기사 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "request",description = "수정할 본문 내용을 작성하세요", example = "댓글 본문 수정본입니다.")
+    })
     @PutMapping("/articles/{articleCode}/comments/{commentNo}")
     public ResponseEntity<?> updateCommentByArticle(
             @PathVariable("articleCode") String articleCode,
@@ -267,6 +303,11 @@ public class ArticleController {
     }
 
     // 기사별 댓글 삭제
+    @Operation(summary = "기사 댓글 삭제", description = "기사별 댓글 삭제를 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "articleCode",description = "기사 고유 번호를 작성하세요", example = "1", required = true),
+            @Parameter(name = "commentNo",description = "댓글 고유 번호를 작성하세요", example = "2", required = true),
+    })
     @DeleteMapping("/articles/{articleCode}/comments/{commentNo}")
     public ResponseEntity<?> deleteCommentByArticle(
             @PathVariable("articleCode") String articleCode,
