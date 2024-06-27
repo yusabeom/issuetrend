@@ -61,6 +61,13 @@ public class User {
 
     private Date refreshTokenExpiryDate; // 리프레시 토큰의 만료일.
 
+    @Builder.Default
+    private boolean isSubscribed = false;
+
+    @Column(length = 100)
+    private String tid; // 카카오페이 결제 시 개인에게 부여되는 고유 번호
+
+
     // 카카오 access token 저장하는 필드
     public void changeAccessToken(String accessToken) {
         this.accessToken = accessToken;
