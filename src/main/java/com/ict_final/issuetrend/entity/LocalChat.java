@@ -28,9 +28,8 @@ public class LocalChat {
     private Long roomNo;
 
     //닉네임
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nickname")
-    private User user;
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 
     //내용
     @Column(name = "text", nullable = false, length = 300)
