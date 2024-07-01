@@ -90,10 +90,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<PostComments> postComments;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<LocalChat> localChats;
-
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteKeyword> favoriteKeywords;
     public void setFavoriteKeywords(List<FavoriteKeyword> favoriteKeywords) {
