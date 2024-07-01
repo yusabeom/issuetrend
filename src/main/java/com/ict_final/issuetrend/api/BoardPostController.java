@@ -67,6 +67,20 @@ public class BoardPostController {
         }
     }
 
+    // 게시글 페이징 api
+    @Operation(summary = "페이지별 게시물 조회", description = "페이지별 게시물 조회를 담당하는 메서드 입니다.")
+    @GetMapping("/page-post/{pageNo}")
+    public ResponseEntity<?> searchPostByPage(@PathVariable("pageNo") Long pageNo) {
+
+        try {
+            List<PostResponseDTO> pagePosts = boardPostService.findPgaePosts(pageNo);
+            return ResponseEntity.ok().body(pagePosts);
+        } catch (Exception e) {
+            log.error("게시글 전체 조회 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     // 게시글 등록하기
     @Operation(summary = "게시물 등록", description = "게시물 등록을 담당하는 메서드 입니다.")
     @Parameters({
