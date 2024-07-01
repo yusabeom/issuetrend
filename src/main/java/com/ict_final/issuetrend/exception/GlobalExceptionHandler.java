@@ -19,17 +19,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({RuntimeException.class, NoRegisteredArgumentException.class})
     public ResponseEntity<?> handleRuntimeException(RuntimeException e) {
+        e.printStackTrace();
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e) {
+        e.printStackTrace();
         log.info("handleIllegalArgumentException 호출!");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleRuntimeException(Exception e) {
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 

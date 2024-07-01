@@ -3,6 +3,7 @@ package com.ict_final.issuetrend.api;
 import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.LoginRequestDTO;
 import com.ict_final.issuetrend.dto.request.UserSignUpRequestDTO;
+import com.ict_final.issuetrend.dto.request.UserUpdateInfoRequestDTO;
 import com.ict_final.issuetrend.dto.response.LoginResponseDTO;
 import com.ict_final.issuetrend.dto.response.NickResponseDTO;
 import com.ict_final.issuetrend.dto.response.UserSignUpResponseDTO;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -262,4 +264,64 @@ public class UserController {
 //        userService.sendNewsLetter();
 //        return null;
 //    }
+
+    // 회원정보변경 요청 처리
+    @PostMapping("/update-my-info")
+    public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+                                            @Validated @RequestPart("user") UserUpdateInfoRequestDTO dto,
+                                            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+                                            BindingResult result) {
+
+
+
+        // log.info("/issue-trend/update-my-info POST! - {}", dto);
+        log.info("회원정보 변경 메서드 들어옴");
+        log.info("tokenInfo: {} dto: {} profileImage: {}", tokenUserInfo, dto, profileImage);
+        ResponseEntity<FieldError> resultEntity = getFieldErrorResponseEntity(result);
+        if (resultEntity != null) return resultEntity;
+
+        String email = tokenUserInfo.getEmail();
+
+        String newNick = dto.getNickname();
+        String newPw = dto.getPassword();
+        String newRegionName = dto.getRegionName();
+        log.info("dto.getFavoriteKeywords: {}", dto.getFavoriteKeywords());
+        List<String> newFavoriteKeywords = dto.getFavoriteKeywords();
+        log.info("newFavoriteKeywords: {}", newFavoriteKeywords); // [dddd, ddd, sdaDS]
+
+        userService.updateMyInfo(email, newNick, newPw, newRegionName, newFavoriteKeywords); //profileImage
+
+        log.info("dto.getFavoriteKeywords(): {}", dto.getFavoriteKeywords());
+        return ResponseEntity.ok().body("success");
+
+    }
+
+
+
+
+
+
+    // tokenInfo: TokenUserInfo(userNo=44, email=ilypsj@naver.comddd) dto: UserUpdateInfoRequestDTO(password=rkskdy1111, regionName=서울, nickname=가나요d, favoriteKeywords=[s, sss, sssss])
+    // profileImage: null
+    //////////////////////////////////////////////////////////////////
+
+        /*
+        try {
+            String uploadedFilePath = null;
+            if (profileImage != null) {
+                log.info("attached file name: {}", profileImage.getOriginalFilename());
+                // 전달받은 프로필 이미지를 먼저 지정된 경로에 저장한 후 저장 경로를 DB에 세팅하자.
+                uploadedFilePath = userService.uploadProfileImage(profileImage);
+            }
+            UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
+            log.info("responseDTO: {}", responseDTO);
+            return ResponseEntity.ok().body(responseDTO);
+        } catch (IOException e) {
+            log.error("An unexpected error occurred!", e);
+            e.printStackTrace();
+            throw new RuntimeException("An unexpected error occurred!", e);
+        }
+        */
+
+
 }

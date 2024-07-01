@@ -101,7 +101,17 @@ public class User {
         favoriteKeywords.forEach(fk -> fk.setUser(this));
     }
 
+    // 기존 키워드들을 유지하면서 새로운 키워드 추가
+    public void addFavoriteKeywords(List<String> keywords) {
+        for (String keyword : keywords) {
+            FavoriteKeyword favoriteKeyword = new FavoriteKeyword(keyword, this);
+            this.favoriteKeywords.add(favoriteKeyword);
+        }
+    }
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Scrap> scraps;
+
+    // private boolean isSubscribed = false;
 
 }

@@ -1,0 +1,119 @@
+[33m4031921[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m LoginResponsDTO - favoritKeywords 추가 및 User클래스 isSubscribe 필드 추가
+[33m2c19a93[m Merge pull request #30 from hongkongee/develop
+[33m56c387f[m 네이버 지역 검색 API를 이용한 지역별 맛집 정보
+[33m8a2674a[m Merge pull request #29 from KangYeBin/develop
+[33mf09a956[m 지역별 범죄 유형과 발생 현황 api 구현
+[33m7b77be6[m Merge pull request #28 from Leegayeonn/develop
+[33mfe11e45[m Merge branch 'yusabeom:develop' into develop
+[33m1e3e67f[m 미세먼지 api 구현완료
+[33ma11280a[m 미세먼지 api 구현중
+[33m47abe93[m 로그인 유저 비밀번호 확인 후 정보변경 페이지 전환 로직 추가
+[33m3687f57[m Merge pull request #27 from KangYeBin/develop
+[33m1ddc743[m 뉴스레터 thymeleaf 추가
+[33md5f8d5b[m nickDTO profileImage 필드 추가
+[33m5c1e230[m nickResponseDTO 추가
+[33m2261eb0[m 닉네임으로 user정보 조회
+[33md8ff52c[m Merge pull request #26 from alsgurdl/develop
+[33m4a48dcc[m aws 회원가입 이미지 경로
+[33m450e437[m swagger 초기 설정 및 boardPostController 변경, 게시물 이미지 경로 aws 변경
+[33m2fb41b6[m shortTitle 에러 수정
+[33m82d116f[m Merge pull request #25 from alsgurdl/develop
+[33me6450ff[m 카카오 로그인
+[33m1f82bdf[m Merge pull request #24 from KangYeBin/develop
+[33md650870[m 메일 thymeleaf 추가
+[33m9f8a46f[m Merge branch 'newSB' into develop
+[33m88950b4[m ArticleDetailResponseDTO shortTitle 필드 추가
+[33mc3af8ff[m Merge pull request #23 from alsgurdl/develop
+[33m9dbb0eb[m 토큰 userNo 클레임 추가
+[33m3c55ac6[m 게시글 댓글 작성, 수정, 조회, 삭제 기능 추가
+[33ma833ad1[m Merge branch 'newSB' into develop
+[33mf978081[m filtering API 추가
+[33m8f803cf[m[33m ([m[1;35mrefs/stash[m[33m)[m WIP on develop: 7a30260 Merge pull request #22 from alsgurdl/develop
+[33mb1a8e3f[m index on develop: 7a30260 Merge pull request #22 from alsgurdl/develop
+[33m7a30260[m Merge pull request #22 from alsgurdl/develop
+[33m3fb5a53[m 회원가입 키워드 완료
+[33m75ea9b7[m BoardPost mapped error 해결
+[33m4ef15e7[m merge newSb develop
+[33m4e1df72[m 스크랩 기능 추가 (등록, 조회, 삭제)
+[33mb1fdb01[m Merge pull request #21 from KangYeBin/develop
+[33m2a2a62e[m DB 수정
+[33m3d737e4[m Merge pull request #20 from alsgurdl/nick
+[33m031d46d[m 닉네임 중복처리 완료
+[33mbceaaa9[m 회원가입 nickname 요청 및 응답 처리, 게시글 수정 시 시간 변경
+[33m2d7c237[m merge newSb develop
+[33m99ede27[m Merge pull request #19 from alsgurdl/out
+[33m9272674[m 게시글 수정 완료
+[33m3595085[m 프로필 업로드 수정중
+[33me315cf7[m Merge pull request #18 from KangYeBin/develop
+[33m93cc1c2[m 닉네임, 스크랩 DB 추가
+[33m6bde984[m 임시 비밀번호 암호화
+[33m0581100[m Merge pull request #17 from KangYeBin/develop
+[33mddfcada[m 키워드 없이 검색 시 저장되지 않도록 수정, 1시간마다 검색어 삭제
+[33mc861d3a[m Merge pull request #16 from KangYeBin/develop
+[33m7ab8eba[m 키워드도 모든 기사에서 가져오도록 수정
+[33mf228d52[m Merge pull request #15 from KangYeBin/develop
+[33m08fc070[m 새로운 비밀번호 메일로 전송
+[33m247c191[m Merge pull request #14 from alsgurdl/develop
+[33m61f32e2[m Merge branch 'yusabeom:develop' into develop
+[33m3edf368[m 지역 데이터 베이스 저장 완료
+[33m8c32eb9[m 게시글 작성시 img 파일 추가 경로 설정 및 img로딩 완료
+[33m2c744b1[m 게시글 등록, 조회, 삭제 기능 추가
+[33m5019c7d[m Merge branch 'currentSb' into develop
+[33mdfec584[m 게시글 조회 API 작성
+[33mca70d7f[m 게시글 작성 초기(requestDTO, controller, service, repository 생성)
+[33m9e2994b[m Merge pull request #13 from KangYeBin/develop
+[33mdcbc760[m 실시간 검색어 기능 추가
+[33m58d6463[m Merge pull request #12 from KangYeBin/develop
+[33m625cd8f[m 모든 기사를 불러오도록 수정
+[33m4f88d43[m articleComments 작성, 수정, 조회, 삭제 기능 추가
+[33m13ee049[m Merge branch 'newSSSSS' into develop
+[33m29d11c4[m 기사 createDate format
+[33m54f8a5e[m Merge pull request #11 from KangYeBin/develop
+[33m14c5618[m 기사 불러오는 날짜 수정
+[33ma66da9b[m LoginResponseDTO 수정
+[33mbae7eea[m Merge pull request #10 from alsgurdl/develop
+[33m852b259[m Merge branch 'develop' into develop
+[33m1b802d4[m 토큰 예외 처리완료 프로필 데이터 응답처리
+[33mbf078e7[m Merge pull request #9 from KangYeBin/develop
+[33ma690e62[m Merge branch 'develop' into develop
+[33mec46af8[m DB 수정
+[33m1567514[m DB 수정
+[33m97fd993[m Merge branch 'currentSb' into develop
+[33ma7015a0[m Merge pull request #8 from KangYeBin/develop
+[33me0f23d7[m 기사 상세 조회 기능 추가
+[33md54874d[m DB 수정
+[33m9e07741[m 토큰 예외 처리완료 프로필 데이터 응답처리
+[33mcf6bcdd[m ArticleDetailResponseDTO 필드 TruncatedText 추가
+[33mccf3c97[m Merge branch 'currentsb' into develop
+[33m9d0bb9a[m search 메서드 추가
+[33m1178fc5[m Merge pull request #7 from KangYeBin/develop
+[33m2cc664b[m 파일 경로 수정
+[33med629db[m responseDTO 수정
+[33mb869201[m 토큰 수정중
+[33m60cb096[m 토큰 수정중
+[33mb164cd3[m 토큰 예외 처리중
+[33m4001fde[m Merge pull request #6 from KangYeBin/develop
+[33m89e2f42[m 전체/지역별 기사, 키워드 가져오기
+[33m3425332[m 토큰 예외 처리
+[33m24d41cc[m Merge branch 'sabeom' into develop
+[33m349fd91[m 프로필 이미지  등록 처리
+[33mc1d93ed[m Merge pull request #5 from KangYeBin/develop
+[33m05c4dd2[m 카카오api완료
+[33mec4c77f[m Entity 수정
+[33m0402132[m 회원가입 검증, 로그인 처리(토큰x)
+[33mfae62ff[m keywords엔터티 추가
+[33m593893c[m Userservice 추가
+[33meec58d9[m 이메일 중복 검사 검증, spring security 설정
+[33m2e052bc[m 이메일 검증 확인, spring security 설정
+[33mfa85cda[m Merge pull request #4 from alsgurdl/develop
+[33m2629fbf[m entity 수정완료
+[33mebb204e[m entity
+[33m0b21c8e[m main 실행 오류 해결
+[33m3bb0bb2[m 이메일 중복 검사, 회원가입 초기 설정
+[33m7417154[m error
+[33m0619642[m Merge pull request #3 from alsgurdl/token
+[33mf52e777[m 토큰 생성, 위조 검사,에러
+[33mfec3d4d[m Merge pull request #2 from alsgurdl/entity
+[33m21c7e5c[m entity 테이블 작성 완료
+[33m5cc94ef[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m basic setup
+[33mf98e6d5[m Initial commit

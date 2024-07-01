@@ -37,10 +37,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static com.ict_final.issuetrend.util.ArticleSorter.sortArticlesByCreatedDate;
 
@@ -418,5 +418,76 @@ public class UserService {
 
         String encodedPassword = user.getPassword();
         return passwordEncoder.matches(checkPw, encodedPassword);
+    }
+
+
+    @Transactional
+    public void updateMyInfo(String email, String newNick, String newPw, String newRegionName, List<String> newFavoriteKeywords) {
+        log.info("newFavoriteKeywords.toString(): {}", newFavoriteKeywords.toString());
+        // [dddd, ddd, sdaDS]
+
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("존재하지 않는 아이디 입니다."));
+        log.info("user: {}", user);
+
+        user.setRegionName(newRegionName);
+        user.setNickname(newNick);
+        // password 암호화한 뒤 셋팅
+        String newEncodedPw = passwordEncoder.encode(newPw);
+        user.setPassword(newEncodedPw);
+
+        // favorite 키워드 셋팅
+        
+        // 기존 키워드 갖고 오기
+        List<FavoriteKeyword> existingKeywords = user.getFavoriteKeywords();
+
+        // List<FavoriteKeyword> --> List<String>
+        //
+        log.info("user.getFavoriteKeywords().toString(): {}", user.getFavoriteKeywords().toString());
+        // [FavoriteKeyword(favoriteNo=48, favoriteKeyword=dddd), FavoriteKeyword(favoriteNo=49, favoriteKeyword=ddd)]
+
+        // 기존의 키워드만을 List<String> 타입 변수에 대입
+        List<String> existingKeywordsList = existingKeywords.stream().map(FavoriteKeyword::getFavoriteKeyword).collect(Collectors.toList());
+
+
+        // 기존 키워드와 새로 추가된 키워드를 합할
+        List<String> existingAddKeywordsList = existingKeywords.stream().map(FavoriteKeyword::getFavoriteKeyword).collect(Collectors.toList());
+        // 기존 키워드만을 가져와 추가
+        // 기존 키워드와 새로운 키워드가 모두 합해진 리스트 ( 중복 있음 ) // existingAddKeywordsList
+        existingAddKeywordsList.addAll(newFavoriteKeywords);
+
+        // 중복 키워드 제거
+        Set<String> existingAddKeywordsSet = new HashSet<>(existingAddKeywordsList);
+
+        // 다시 리스트로
+        List<String> uniqueKeywords = new ArrayList<>(existingAddKeywordsSet);
+
+        // 기존과 비교해 어떤 키워드가 추가 됐는지
+        // 추가된 키워드를 모두 addedKeywords에 담는다.
+        List<String> addedKeywords = new ArrayList<>();
+
+        for(String keyword: uniqueKeywords) {
+            if(!existingKeywordsList.contains(keyword)) {
+                addedKeywords.add(keyword);
+            }
+        }
+
+
+        log.info("기존 키워드 + 추가 키워드 : {}", uniqueKeywords);
+        log.info("기존에 저장되어 있었던 키워드: {}", existingKeywordsList);
+        log.info("추가 키워드: {}", addedKeywords);
+
+        // 추가 키워드를 FavoriteKeyword타입으로 만들어
+//        List<FavoriteKeyword> addKeywordEntity = addedKeywords.stream()
+//                .map(keyword -> new FavoriteKeyword(keyword, user))
+//                .collect(Collectors.toList());
+
+        // user.getFavoriteKeywords().clear();
+
+        user.addFavoriteKeywords(addedKeywords);
+        // user.setFavoriteKeywords(addKeywordEntity);
+
+        userRepository.save(user);
+
     }
 }
