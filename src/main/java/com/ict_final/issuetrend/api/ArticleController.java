@@ -189,6 +189,8 @@ public class ArticleController {
                     .map(ArticleDetailResponseDTO::new)
                     .toList();
 
+            log.info("responseDTOList: " + responseDTOList.subList(0, Math.min(5, responseDTOList.size())));
+
             return ResponseEntity.ok().body(responseDTOList);
         } catch (Exception e) {
             log.error("Error filtering articles", e);
