@@ -19,17 +19,22 @@ import java.time.LocalDateTime;
 public class LocalChat {
     //지역별 채팅방 코드
     @Id
-    @Column(name = "area_code")
+    @Column(name = "chat_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long areaCode;
+    private Long chatNo;
 
-    //회원 번호
+    //방 번호
+    @Column(name = "room_no")
+    private Long roomNo;
+
+    //닉네임
+    @Column(nullable = false, length = 100)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_no")
+    @JoinColumn(name = "nickname")
     private User user;
 
     //내용
-    @Column(nullable = false,length = 300)
+    @Column(name = "text", nullable = false, length = 300)
     private String text;
 
     //작성 시간
