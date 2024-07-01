@@ -270,13 +270,14 @@ public class UserController {
     public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                             @Validated @RequestPart("user") UserUpdateInfoRequestDTO dto,
                                             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-                                            BindingResult result) {
+                                            BindingResult result) throws IOException {
 
 
 
         // log.info("/issue-trend/update-my-info POST! - {}", dto);
         log.info("회원정보 변경 메서드 들어옴");
-        log.info("tokenInfo: {} dto: {} profileImage: {}", tokenUserInfo, dto, profileImage);
+        log.info("tokenInfo: {} dto: {}", tokenUserInfo, dto);
+        log.info("profile_filename: {}", profileImage.getOriginalFilename());
         ResponseEntity<FieldError> resultEntity = getFieldErrorResponseEntity(result);
         if (resultEntity != null) return resultEntity;
 
@@ -289,18 +290,20 @@ public class UserController {
         List<String> newFavoriteKeywords = dto.getFavoriteKeywords();
         log.info("newFavoriteKeywords: {}", newFavoriteKeywords); // [dddd, ddd, sdaDS]
 
-        userService.updateMyInfo(email, newNick, newPw, newRegionName, newFavoriteKeywords); //profileImage
+        String filePath = null;
+        if(profileImage != null ) {
+            filePath = userService.uploadProfileImage(profileImage);
+        }
+        userService.updateMyInfo(email, newNick, newPw, newRegionName, newFavoriteKeywords, filePath);
+
+
+        //profileImage
 
         log.info("dto.getFavoriteKeywords(): {}", dto.getFavoriteKeywords());
         return ResponseEntity.ok().body("success");
 
     }
-
-
-
-
-
-
+    // 주석 지우지 말아주세요
     // tokenInfo: TokenUserInfo(userNo=44, email=ilypsj@naver.comddd) dto: UserUpdateInfoRequestDTO(password=rkskdy1111, regionName=서울, nickname=가나요d, favoriteKeywords=[s, sss, sssss])
     // profileImage: null
     //////////////////////////////////////////////////////////////////
@@ -322,6 +325,16 @@ public class UserController {
             throw new RuntimeException("An unexpected error occurred!", e);
         }
         */
+
+    @DeleteMapping("/delete")// /{userNo}
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
+        // @PathVariable String userNo
+        log.info("/delete 들어옴");
+        log.info("TokenUserInfo: {}", tokenUserInfo);
+        // String userNo = tokenUserInfo.getUserNo();
+
+        return ResponseEntity.ok().body("SUCCESS");
+    }
 
 
 }

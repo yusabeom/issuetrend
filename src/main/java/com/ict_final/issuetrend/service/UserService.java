@@ -126,6 +126,8 @@ public class UserService {
         }
         log.info("{}님 로그인 성공!", user.getEmail());
         Map<String, String> token = getTokenMap(user);
+        log.info("token: {}", token);
+        log.info("token.toString(): {}", token.toString());
         user.changeRefreshToken(token.get("refresh_token"));
         user.changeRefreshExpiryDate(tokenProvider.getExpiryDate(token.get("refresh_token")));
         userRepository.save(user);
@@ -422,7 +424,7 @@ public class UserService {
 
 
     @Transactional
-    public void updateMyInfo(String email, String newNick, String newPw, String newRegionName, List<String> newFavoriteKeywords) {
+    public void updateMyInfo(String email, String newNick, String newPw, String newRegionName, List<String> newFavoriteKeywords, String filePath) {
         log.info("newFavoriteKeywords.toString(): {}", newFavoriteKeywords.toString());
         // [dddd, ddd, sdaDS]
 
@@ -440,6 +442,8 @@ public class UserService {
         
         // 기존 키워드 갖고 오기
         List<FavoriteKeyword> existingKeywords = user.getFavoriteKeywords();
+
+        if(filePath != null) user.setProfileImage(filePath);
 
         // List<FavoriteKeyword> --> List<String>
         //

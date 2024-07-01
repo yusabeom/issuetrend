@@ -73,11 +73,11 @@ public class TokenProvider {
     }
 
     public String createAccessKey(User userEntity) {
-        return createToken(userEntity, SECRET_KEY, 30, ChronoUnit.SECONDS);
+        return createToken(userEntity, SECRET_KEY, 3, ChronoUnit.MINUTES);
     }
 
     public String createRefreshKey(User userEntity) {
-        return createToken(userEntity, REFRESH_SECRET_KEY, 1, ChronoUnit.HOURS);
+        return createToken(userEntity, REFRESH_SECRET_KEY, 30, ChronoUnit.DAYS);
     }
 
     // 토큰에서 클레임을 추출하는 로직을 분리했습니다.
