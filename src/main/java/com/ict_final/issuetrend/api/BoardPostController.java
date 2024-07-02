@@ -67,8 +67,24 @@ public class BoardPostController {
         }
     }
 
+    // 회원이 작성한 게시글 전체 조회하기
+    @Operation(summary = "회원 작성 게시물 전체 조회", description = "회원이 작성한 게시물 전체 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "userNo", description = "해당 회원의 번호를 작성하세요.", example = "1", required = true)
+    @GetMapping("/search-post-user/{userNo}")
+    public ResponseEntity<?> searchPostByUserNo(@PathVariable("userNo") Long userNo) {
+
+        try {
+            List<PostResponseDTO> userPosts = boardPostService.findUserPosts(userNo);
+            return ResponseEntity.ok().body(userPosts);
+        } catch (Exception e) {
+            log.error("게시글 전체 조회 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     // 게시글 페이징 api
     @Operation(summary = "페이지별 게시물 조회", description = "페이지별 게시물 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "pageNo", description = "페이지 번호를 작성하세요.", example = "1", required = true)
     @GetMapping("/page-post/{pageNo}")
     public ResponseEntity<?> searchPostByPage(@PathVariable("pageNo") Long pageNo) {
 
@@ -229,6 +245,23 @@ public class BoardPostController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting comment: " + e.getMessage());
+        }
+    }
+
+    // 내가 작성한 댓글 조회
+    @Operation(summary = "내가 작성한 댓글 조회", description = "내가 작성한 댓글 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "userNo", description = "해당 회원의 번호를 작성하세요.", example = "1", required = true)
+    @GetMapping("/post/comments/{userNo}")
+    public ResponseEntity<?> getPostCommentsByUserNo(@PathVariable("userNo") Long userNo) {
+        try {
+            List<PostComments> comments = postCommentsService.getPostCommentsByUserNo(userNo);
+            List<BoardComResponseDTO> collect = comments.stream()
+                    .map(BoardComResponseDTO::new)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok().body(collect);
+        } catch (Exception e) {
+            log.error("Error fetching comments", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching comments");
         }
     }
 

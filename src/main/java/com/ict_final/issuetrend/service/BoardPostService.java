@@ -115,4 +115,10 @@ public class BoardPostService {
     }
 
 
+    public List<PostResponseDTO> findUserPosts(Long userNo) {
+        List<BoardPost> boardPosts = boardPostRepository.findbyUserNo(userNo);
+        return boardPosts.stream()
+                .map(PostResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 }
