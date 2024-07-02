@@ -1,7 +1,6 @@
 package com.ict_final.issuetrend.Pay.controller;
 
 import com.ict_final.issuetrend.Pay.request.PaymentRequestDTO;
-import com.ict_final.issuetrend.Pay.response.PaymentApprovalResponseDTO;
 import com.ict_final.issuetrend.Pay.response.PaymentResponseDTO;
 import com.ict_final.issuetrend.Pay.service.PaymentService;
 import com.ict_final.issuetrend.entity.User;
@@ -58,15 +57,15 @@ public class PaymentController {
 
     @Operation(summary = "결제 취소", description = "결제 취소를 담당하는 메서드 입니다.")
     @GetMapping("/cancel")
-    public String cancelPayment() {
+    public ResponseEntity<?> cancelPayment() {
         // 결제 취소 처리
-        return "Payment canceled";
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/home")).build();
     }
     @Operation(summary = "결제 실패", description = "결제 실패를 담당하는 메서드 입니다.")
     @GetMapping("/fail")
-    public String failPayment() {
+    public ResponseEntity<?> failPayment() {
         // 결제 실패 처리
-        return "Payment failed";
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/home")).build();
     }
 
     @Operation(summary = "구독 상태 조회", description = "구독 상태 조회를 담당하는 메서드 입니다.")

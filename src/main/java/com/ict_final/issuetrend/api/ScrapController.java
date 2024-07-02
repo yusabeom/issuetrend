@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class ScrapController {
             @Parameter(name = "articleCode", description = "기사 고유 번호를 작성하세요.", example = "1", required = true)
     })
     @PostMapping
-    public ResponseEntity<?> scrapArticle(@RequestBody ScrapRequestDTO requestDTO) {
+    public ResponseEntity<?> scrapArticle(@AuthenticationPrincipal @RequestBody ScrapRequestDTO requestDTO) {
         scrapService.scrapArticle(requestDTO);
         return ResponseEntity.ok().build();
     }
@@ -42,7 +43,7 @@ public class ScrapController {
     @Operation(summary = "스크랩 조회", description = "회원의 스크랩을 조회하는 메서드 입니다.")
     @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요.", example = "1", required = true)
     @GetMapping("/{userNo}")
-    public ResponseEntity<List<ArticleDetailResponseDTO>> getScrappedArticles(@PathVariable("userNo") Long userNo) {
+    public ResponseEntity<List<ArticleDetailResponseDTO>> getScrappedArticles(@AuthenticationPrincipal @PathVariable("userNo") Long userNo) {
         List<Article> articles = scrapService.getScrappedArticles(userNo);
         List<ArticleDetailResponseDTO> articleDetails = articles.stream()
                 .map(ArticleDetailResponseDTO::new)
@@ -57,7 +58,7 @@ public class ScrapController {
 
     })
     @DeleteMapping("/{userNo}/{articleCode}")
-    public ResponseEntity<Void> deleteScrap(@PathVariable("userNo") Long userNo, @PathVariable("articleCode") String articleCode) {
+    public ResponseEntity<Void> deleteScrap(@AuthenticationPrincipal @PathVariable("userNo") Long userNo, @PathVariable("articleCode") String articleCode) {
         scrapService.deleteScrap(userNo, articleCode);
         return ResponseEntity.ok().build();
     }
