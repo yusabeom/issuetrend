@@ -453,7 +453,6 @@ public class UserService {
         // 기존의 키워드만을 List<String> 타입 변수에 대입
         List<String> existingKeywordsList = existingKeywords.stream().map(FavoriteKeyword::getFavoriteKeyword).collect(Collectors.toList());
 
-
         // 기존 키워드와 새로 추가된 키워드를 합할
         List<String> existingAddKeywordsList = existingKeywords.stream().map(FavoriteKeyword::getFavoriteKeyword).collect(Collectors.toList());
         // 기존 키워드만을 가져와 추가
@@ -481,17 +480,14 @@ public class UserService {
         log.info("기존에 저장되어 있었던 키워드: {}", existingKeywordsList);
         log.info("추가 키워드: {}", addedKeywords);
 
-        // 추가 키워드를 FavoriteKeyword타입으로 만들어
-//        List<FavoriteKeyword> addKeywordEntity = addedKeywords.stream()
-//                .map(keyword -> new FavoriteKeyword(keyword, user))
-//                .collect(Collectors.toList());
-
-        // user.getFavoriteKeywords().clear();
-
         user.addFavoriteKeywords(addedKeywords);
-        // user.setFavoriteKeywords(addKeywordEntity);
 
         userRepository.save(user);
 
+    }
+
+    public void deleteUser(TokenUserInfo tokenUserInfo) {
+        User user = userRepository.findByEmail(tokenUserInfo.getEmail()).orElseThrow();
+        userRepository.delete(user);
     }
 }

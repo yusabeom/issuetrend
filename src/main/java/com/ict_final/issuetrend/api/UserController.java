@@ -163,8 +163,9 @@ public class UserController {
 
         if (filePath != null){
             return ResponseEntity.ok().body(filePath);
-        }else{
-            return ResponseEntity.notFound().build();
+        } else {
+            filePath = null;
+            return ResponseEntity.ok().body(filePath);
         }
 
     }
@@ -299,8 +300,11 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
         // @PathVariable String userNo
         log.info("/delete 들어옴");
-        log.info("TokenUserInfo: {}", tokenUserInfo);
+        log.info("tokenUserInfo.getUserNo(): {}", tokenUserInfo.getUserNo());
         // String userNo = tokenUserInfo.getUserNo();
+        Long userNo = tokenUserInfo.getUserNo();
+        userService.deleteUser(tokenUserInfo);
+
 
         return ResponseEntity.ok().body("SUCCESS");
     }
