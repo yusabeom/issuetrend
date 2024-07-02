@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.BoardComRequestDTO;
 import com.ict_final.issuetrend.dto.request.PostRequestDTO;
 import com.ict_final.issuetrend.dto.response.BoardComResponseDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,12 +71,11 @@ public class BoardPostController {
 
     // 회원이 작성한 게시글 전체 조회하기
     @Operation(summary = "회원 작성 게시물 전체 조회", description = "회원이 작성한 게시물 전체 조회를 담당하는 메서드 입니다.")
-    @Parameter(name = "userNo", description = "해당 회원의 번호를 작성하세요.", example = "1", required = true)
-    @GetMapping("/search-post-user/{userNo}")
-    public ResponseEntity<?> searchPostByUserNo(@PathVariable("userNo") Long userNo) {
+    @GetMapping("/search-post-user")
+    public ResponseEntity<?> searchPostByUserNo(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
 
         try {
-            List<PostResponseDTO> userPosts = boardPostService.findUserPosts(userNo);
+            List<PostResponseDTO> userPosts = boardPostService.findUserPosts(tokenUserInfo.getUserNo());
             return ResponseEntity.ok().body(userPosts);
         } catch (Exception e) {
             log.error("게시글 전체 조회 중 오류 발생", e);
@@ -250,11 +251,10 @@ public class BoardPostController {
 
     // 내가 작성한 댓글 조회
     @Operation(summary = "내가 작성한 댓글 조회", description = "내가 작성한 댓글 조회를 담당하는 메서드 입니다.")
-    @Parameter(name = "userNo", description = "해당 회원의 번호를 작성하세요.", example = "1", required = true)
-    @GetMapping("/post/comments/{userNo}")
-    public ResponseEntity<?> getPostCommentsByUserNo(@PathVariable("userNo") Long userNo) {
+    @GetMapping("/post/comments-user")
+    public ResponseEntity<?> getPostCommentsByUserNo(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
         try {
-            List<PostComments> comments = postCommentsService.getPostCommentsByUserNo(userNo);
+            List<PostComments> comments = postCommentsService.getPostCommentsByUserNo(tokenUserInfo.getUserNo());
             List<BoardComResponseDTO> collect = comments.stream()
                     .map(BoardComResponseDTO::new)
                     .collect(Collectors.toList());

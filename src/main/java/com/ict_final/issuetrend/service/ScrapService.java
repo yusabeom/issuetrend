@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.service;
 
+import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.ScrapRequestDTO;
 import com.ict_final.issuetrend.dto.response.ScrapResponseDTO;
 import com.ict_final.issuetrend.entity.Article;
@@ -29,8 +30,8 @@ public class ScrapService {
 
 
     @Transactional
-    public void scrapArticle(ScrapRequestDTO requestDTO) {
-        User user = userRepository.findByUserNo(requestDTO.getUserNo())
+    public void scrapArticle(TokenUserInfo tokenUserInfo, ScrapRequestDTO requestDTO) {
+        User user = userRepository.findByUserNo(tokenUserInfo.getUserNo())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Article article = articleRepository.findByArticleCode(requestDTO.getArticleCode());
 

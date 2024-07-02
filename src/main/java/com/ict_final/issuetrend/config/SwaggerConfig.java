@@ -14,8 +14,8 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
-                        .title("Spring boot Board API Example")
-                        .description("Spring boot Board API 예시 프로젝트 입니다.")
+                        .title("ISSUE TREND API")
+                        .description("ICT FinalProject - ISSUE TREND API 입니다.")
                         .version("v1.0.0")
                 );
     }
