@@ -29,9 +29,11 @@ public class JWTExceptionFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             // 토큰이 만료되었을 시 Auth Filter에서 예외가 발생 -> 앞에 있는 Exception Filter로 전달.
             log.warn("ExpiredJwtException 발생함!");
+            e.printStackTrace();
             setErrorResponse(response, ErrorCode.EXPIRED_TOKEN);
         } catch (JwtException e) {
             log.warn("JwtException 발생함!");
+            e.printStackTrace();
             setErrorResponse(response, ErrorCode.INVALID_TOKEN);
         } catch (IllegalArgumentException e) {
             log.warn("토큰이 전달되지 않음!");

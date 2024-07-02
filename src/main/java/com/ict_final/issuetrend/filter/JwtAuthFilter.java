@@ -46,6 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("request: {} ", request);
         String token = parseBearerToken(request);
         log.info("JWT Token Filter is running... - token: {}", token);
 
@@ -100,6 +101,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // -- content-type: application/json
         // -- Authorization: Bearer aslkdblk2dnkln34kl52...
         String bearerToken = request.getHeader("Authorization");
+        log.info("bearerToken: {}", bearerToken);
 
         // 요청 헤더에서 가져온 토큰은 순수 토큰 값이 아닌
         // 앞에 Bearer가 붙어있으니 이것을 제거하는 작업.
@@ -107,6 +109,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
         }
+        log.info("bearerToken sub후: {}", bearerToken);
         return null;
     }
 

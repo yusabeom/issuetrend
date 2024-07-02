@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 @Setter
 @Getter
-@ToString(exclude = "favoriteKeywords")
+@ToString(exclude = {"favoriteKeywords", "boardPosts"})
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor

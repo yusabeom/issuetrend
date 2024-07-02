@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Getter
-@ToString
+@ToString(exclude = "user")
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor

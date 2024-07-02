@@ -24,7 +24,4 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u From User u WHERE u.isSubscribed = true")
     List<User> findBySubscribed();
 
-
-//    @Query()
-//    void updatePassword(@Param("email") String email, @Param("tempPassword")String tempPassword);
 }
