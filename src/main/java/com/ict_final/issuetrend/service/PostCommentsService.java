@@ -66,4 +66,8 @@ public class PostCommentsService {
         PostComments comment = optionalComment.get();
         postCommentRepository.delete(comment);
     }
+
+    public List<PostComments> getPostCommentsByUserNo(Long userNo) {
+        return postCommentRepository.findByBoardpostUserNo(userNo);
+    }
 }

@@ -166,38 +166,7 @@ public class UserController {
         }else{
             return ResponseEntity.notFound().build();
         }
-            // 2. 얻어낸 파일 경로를 통해 실제 파일 데이터를 로드하기.
-           // File profileFile = new File(filePath);
 
-            // 모든 사용자가 프로필 사진을 가지는 것은 아니다. -> 프사를 등록하지 않은 사람은 해당 경로가 존재하지 않을 것.
-            // 만약 존재하지 않는 경로라면 클라이언트로 404 status를 리턴.
-//            if (!profileFile.exists()) {
-//                // 만약 조회한 파일 경로가 http://~~~로 시작한다면 -> 카카오 로그인 한 사람이다!
-//                // 카카오 로그인 프로필은 변환 과정 없이 바로 이미지 url을 리턴해 주시면 됩니다.
-//                if (filePath.startsWith("http://")) {
-//                    return ResponseEntity.ok().body(filePath);
-//                }
-//                return ResponseEntity.notFound().build();
-           // }
-
-            // 해당 경로에 저장된 파일을 바이트 배열로 직렬화 해서 리턴
-          //  byte[] fileData = FileCopyUtils.copyToByteArray(profileFile);
-
-            // 3. 응답 헤더에 컨텐츠 타입을 설정
-          //  HttpHeaders headers = new HttpHeaders();
-         //   MediaType contentType = findExtensionAndGetMediaType(filePath);
-        //    if (contentType == null) {
-              //  return ResponseEntity.internalServerError()
-             //           .body("발견된 파일은 이미지 파일이 아닙니다.");
-          //  }
-           // headers.setContentType(contentType);
-        //    return ResponseEntity.ok()
-            //        .headers(headers)
-          //          .body(fileData);
-
-     //   } catch (IOException e) {
-     //       throw new RuntimeException(e);
-      //  }
     }
 
     public static MediaType findExtensionAndGetMediaType(String filePath) {
@@ -258,12 +227,6 @@ public class UserController {
         return ResponseEntity.ok().body(nickResponseDTO);
     }
 
-//    뉴스레터 확인용 (실제 사용 X)
-//    @GetMapping("/send-newsletter")
-//    public ResponseEntity<?> sendNewsLetter() {
-//        userService.sendNewsLetter();
-//        return null;
-//    }
 
     // 회원정보변경 요청 처리
     @PostMapping("/update-my-info")
@@ -295,33 +258,6 @@ public class UserController {
         return ResponseEntity.ok().body("success");
 
     }
-
-
-
-
-
-
-    // tokenInfo: TokenUserInfo(userNo=44, email=ilypsj@naver.comddd) dto: UserUpdateInfoRequestDTO(password=rkskdy1111, regionName=서울, nickname=가나요d, favoriteKeywords=[s, sss, sssss])
-    // profileImage: null
-    //////////////////////////////////////////////////////////////////
-
-        /*
-        try {
-            String uploadedFilePath = null;
-            if (profileImage != null) {
-                log.info("attached file name: {}", profileImage.getOriginalFilename());
-                // 전달받은 프로필 이미지를 먼저 지정된 경로에 저장한 후 저장 경로를 DB에 세팅하자.
-                uploadedFilePath = userService.uploadProfileImage(profileImage);
-            }
-            UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
-            log.info("responseDTO: {}", responseDTO);
-            return ResponseEntity.ok().body(responseDTO);
-        } catch (IOException e) {
-            log.error("An unexpected error occurred!", e);
-            e.printStackTrace();
-            throw new RuntimeException("An unexpected error occurred!", e);
-        }
-        */
 
 
 }
