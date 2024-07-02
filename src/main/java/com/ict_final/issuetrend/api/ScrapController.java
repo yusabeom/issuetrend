@@ -1,5 +1,6 @@
 package com.ict_final.issuetrend.api;
 
+import com.ict_final.issuetrend.auth.TokenUserInfo;
 import com.ict_final.issuetrend.dto.request.ScrapRequestDTO;
 import com.ict_final.issuetrend.dto.response.ArticleDetailResponseDTO;
 import com.ict_final.issuetrend.dto.response.ScrapResponseDTO;
@@ -35,16 +36,16 @@ public class ScrapController {
             @Parameter(name = "articleCode", description = "기사 고유 번호를 작성하세요.", example = "1", required = true)
     })
     @PostMapping
-    public ResponseEntity<?> scrapArticle(@AuthenticationPrincipal @RequestBody ScrapRequestDTO requestDTO) {
-        scrapService.scrapArticle(requestDTO);
+    public ResponseEntity<?> scrapArticle(@AuthenticationPrincipal TokenUserInfo tokenUserInfo, @RequestBody ScrapRequestDTO requestDTO) {
+        scrapService.scrapArticle(tokenUserInfo, requestDTO);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "스크랩 조회", description = "회원의 스크랩을 조회하는 메서드 입니다.")
     @Parameter(name = "userNo", description = "회원 고유 번호를 작성하세요.", example = "1", required = true)
-    @GetMapping("/{userNo}")
-    public ResponseEntity<List<ArticleDetailResponseDTO>> getScrappedArticles(@AuthenticationPrincipal @PathVariable("userNo") Long userNo) {
-        List<Article> articles = scrapService.getScrappedArticles(userNo);
+    @GetMapping("/user")
+    public ResponseEntity<List<ArticleDetailResponseDTO>> getScrappedArticles(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
+        List<Article> articles = scrapService.getScrappedArticles(tokenUserInfo.getUserNo());
         List<ArticleDetailResponseDTO> articleDetails = articles.stream()
                 .map(ArticleDetailResponseDTO::new)
                 .collect(Collectors.toList());
@@ -57,9 +58,9 @@ public class ScrapController {
             @Parameter(name = "articleCode", description = "기사 고유 번호를 작성하세요.", example = "1", required = true)
 
     })
-    @DeleteMapping("/{userNo}/{articleCode}")
-    public ResponseEntity<Void> deleteScrap(@AuthenticationPrincipal @PathVariable("userNo") Long userNo, @PathVariable("articleCode") String articleCode) {
-        scrapService.deleteScrap(userNo, articleCode);
+    @DeleteMapping("/delete/{articleCode}")
+    public ResponseEntity<Void> deleteScrap(@AuthenticationPrincipal TokenUserInfo tokenUserInfo, @PathVariable("articleCode") String articleCode) {
+        scrapService.deleteScrap(tokenUserInfo.getUserNo(), articleCode);
         return ResponseEntity.ok().build();
     }
 
