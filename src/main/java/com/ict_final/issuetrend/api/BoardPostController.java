@@ -73,9 +73,12 @@ public class BoardPostController {
     @Operation(summary = "회원 작성 게시물 전체 조회", description = "회원이 작성한 게시물 전체 조회를 담당하는 메서드 입니다.")
     @GetMapping("/search-post-user")
     public ResponseEntity<?> searchPostByUserNo(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
+        log.info("내가 작성한 게시물 조회 요청 들어옴: {}", tokenUserInfo);
 
         try {
             List<PostResponseDTO> userPosts = boardPostService.findUserPosts(tokenUserInfo.getUserNo());
+            log.info("userPosts: ", userPosts);
+            log.info("userPosts.toString: ", userPosts.toArray());
             return ResponseEntity.ok().body(userPosts);
         } catch (Exception e) {
             log.error("게시글 전체 조회 중 오류 발생", e);
