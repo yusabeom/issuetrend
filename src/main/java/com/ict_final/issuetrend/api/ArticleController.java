@@ -175,10 +175,7 @@ public class ArticleController {
         log.info("Filtering articles with request: {}", filterRequestDTO);
 
         // 검색한 키워드 저장
-        if (filterRequestDTO.getKeyword() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error not keyword");
-
-        } else {
+        if (!filterRequestDTO.getKeyword().isEmpty()) {
             searchTermService.saveSearchTerm(new SearchTerm(filterRequestDTO.getKeyword()));
         }
 
