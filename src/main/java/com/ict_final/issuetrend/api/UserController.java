@@ -247,7 +247,7 @@ public class UserController {
         // log.info("/issue-trend/update-my-info POST! - {}", dto);
         log.info("회원정보 변경 메서드 들어옴");
         log.info("tokenInfo: {} dto: {}", tokenUserInfo, dto);
-        log.info("profile_filename: {}", profileImage.getOriginalFilename());
+        // log.info("profile_filename: {}", profileImage.getOriginalFilename());
         ResponseEntity<FieldError> resultEntity = getFieldErrorResponseEntity(result);
         if (resultEntity != null) return resultEntity;
 
@@ -265,9 +265,6 @@ public class UserController {
             filePath = userService.uploadProfileImage(profileImage);
         }
         userService.updateMyInfo(email, newNick, newPw, newRegionName, newFavoriteKeywords, filePath);
-
-
-        //profileImage
 
         log.info("dto.getFavoriteKeywords(): {}", dto.getFavoriteKeywords());
         return ResponseEntity.ok().body("success");
