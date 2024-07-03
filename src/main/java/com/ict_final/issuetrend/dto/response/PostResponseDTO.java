@@ -23,6 +23,7 @@ public class PostResponseDTO {
     private String title;
     private String text;
     private LocalDateTime writeDate;
+    private String profileImage;
     private String img;
     private String email;
     private String formatDate;
@@ -33,6 +34,7 @@ public class PostResponseDTO {
         this.title = boardPost.getTitle();
         this.text = boardPost.getText();
         this.writeDate = boardPost.getWriteDate();
+        this.profileImage = boardPost.getUser().getProfileImage();
         this.img = boardPost.getImg();
         this.email = maskEmail(boardPost.getUser().getEmail());
         this.formatDate = formatCreatedDate(boardPost.getWriteDate());
