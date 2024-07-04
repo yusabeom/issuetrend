@@ -438,6 +438,8 @@ public class UserService {
         String newEncodedPw = passwordEncoder.encode(newPw);
         user.setPassword(newEncodedPw);
 
+        if(filePath != null ) user.setProfileImage(filePath);
+
         // favorite 키워드 셋팅
         // 기존 즐겨찾기 키워드 가져오기
         List<FavoriteKeyword> existingKeywords = user.getFavoriteKeywords();
