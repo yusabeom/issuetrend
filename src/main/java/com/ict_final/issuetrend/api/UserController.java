@@ -12,6 +12,8 @@ import com.ict_final.issuetrend.repository.UserRepository;
 import com.ict_final.issuetrend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "User API", description = "회원 정보와 관련된 api 입니다.")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -40,6 +43,8 @@ public class UserController {
     private final UserRepository userRepository;
 
     // 이메일 중복 확인 요청 처리
+    @Operation(summary = "이메일 중복 확인", description = "이메일 중복 확인을 담당하는 메서드 입니다.")
+    @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test123@test.com", required = true)
     @GetMapping("/check")
     public ResponseEntity<?> check(String email) {
         log.info("Received email check request for: {}", email);
@@ -52,6 +57,8 @@ public class UserController {
         return ResponseEntity.ok().body(resultFlag);
     }
 
+    @Operation(summary = "닉네임 중복 확인", description = "닉네임 중복 확인을 담당하는 메서드 입니다.")
+    @Parameter(name = "nickname", description = "닉네임을 작성하세요.", example = "춘시기", required = true)
     @GetMapping("nick-check")
     public ResponseEntity<?> nickCheck(String nickname) {
         if (nickname.trim().isEmpty()) {
@@ -65,8 +72,10 @@ public class UserController {
 
 
     // mypage 정보 변경하기 전 현재 비밀번호 한 번 더 검증
+    @Operation(summary = "비밀번호 확인", description = "사용자의 비밀번호가 일치하는지 확인하는 메서드입니다.")
+    @Parameter(name = "data", description = "비밀번호를 포함한 요청 본문", required = true)
     @PostMapping("/password-check")
-    public ResponseEntity<?> pwCheck(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
+    public ResponseEntity<?> pwCheck(@Parameter(description = "인증된 사용자의 토큰 정보") @AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                      @RequestBody Map<String, String> data) {
         String userEmail = tokenUserInfo.getEmail();
         String checkPw = data.get("password");
@@ -82,6 +91,15 @@ public class UserController {
     }
 
     // 회원가입 요청 처리
+    @Operation(summary = "회원가입 요청 처리", description = "회원가입을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test@email.com", required = true),
+            @Parameter(name = "password", description = "비밀번호를 작성하세요.", example = "password123", required = true),
+            @Parameter(name = "regionName", description = "지역명을 작성하세요.", example = "대전", required = true),
+            @Parameter(name = "nickname", description = "닉네임을 작성하세요.", example = "춘시기", required = true),
+            @Parameter(name = "favoriteKeywords", description = "관심 키워드를 작성하세요.", example = "날씨"),
+            @Parameter(name = "profileImage", description = "프로필 이미지 경로를 작성하세요.", example = "https:~~")
+    })
     @PostMapping
     public ResponseEntity<?> signUp(
             @Validated @RequestPart("user") UserSignUpRequestDTO dto,
@@ -109,6 +127,11 @@ public class UserController {
     }
 
     // 로그인 요청 처리
+    @Operation(summary = "로그인 요청 처리", description = "로그인을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test@email.com", required = true),
+            @Parameter(name = "password", description = "비밀번호를 작성하세요.", example = "password123", required = true),
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Validated @RequestBody LoginRequestDTO dto,
@@ -122,6 +145,8 @@ public class UserController {
     }
 
 
+    @Operation(summary = "카카오 로그인", description = "카카오 로그인을 담당하는 메서드 입니다.")
+    @Parameter(name = "code", description = "카카오에서 발급된 인증 코드", example = "your_kakao_auth_code", required = true)
     @GetMapping("/kakaologin")
     public ResponseEntity<?> kakaoLogin(String code) {
         log.info("/api/auth/kakaoLogin - GET! code: {}", code);
@@ -130,6 +155,11 @@ public class UserController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
+    @Operation(summary = "로그아웃 요청 처리", description = "로그아웃을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "로그아웃 할 회원의 회원번호를 작성하세요.", example = "41", required = true),
+            @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test@email.com")
+    })
     @GetMapping("/logout")
     public ResponseEntity<?> logout(
             @AuthenticationPrincipal TokenUserInfo userInfo
@@ -139,6 +169,8 @@ public class UserController {
         return ResponseEntity.ok().body(result);
     }
 
+    @Operation(summary = "토큰 갱신", description = "리프레시 토큰을 사용하여 액세스 토큰 갱신을 담당하는 메서드입니다.")
+    @Parameter(name = "tokenRequest", description = "리프레시 토큰을 포함한 요청 본문", required = true)
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody Map<String, String> tokenRequest) {
         log.info("/api/auth/refresh: POST! - tokenRequest: {}", tokenRequest);
@@ -150,6 +182,11 @@ public class UserController {
     }
 
     // 프로필 사진 이미지 데이터를 클라이언트에게 응답 처리
+    @Operation(summary = "프로필 이미지 응답 처리", description = "프로필 이미지 로드를 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "로그아웃 할 회원의 회원번호를 작성하세요.", example = "41", required = true),
+            @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test@email.com")
+    })
     @GetMapping("/load-profile")
     public ResponseEntity<?> loadFile(
             @AuthenticationPrincipal TokenUserInfo userInfo
@@ -221,6 +258,8 @@ public class UserController {
     }
 
     // 닉네임으로 유저 정보 찾기
+    @Operation(summary = "닉네임으로 유저 정보 찾기", description = "닉네임으로 회원정보 조회를 담당하는 메서드 입니다.")
+    @Parameter(name = "nickname", description = "닉네임을 작성하세요.", example = "춘시기", required = true)
     @GetMapping("/find-user")
     public ResponseEntity<?> findUser(@RequestParam("nickname") String nickname) {
         User user = userRepository.findByUserNickname(nickname).orElseThrow();
@@ -228,14 +267,17 @@ public class UserController {
         return ResponseEntity.ok().body(nickResponseDTO);
     }
 
-//    뉴스레터 확인용 (실제 사용 X)
-//    @GetMapping("/send-newsletter")
-//    public ResponseEntity<?> sendNewsLetter() {
-//        userService.sendNewsLetter();
-//        return null;
-//    }
 
     // 회원정보변경 요청 처리
+    @Operation(summary = "회원 정보 수정", description = "사용자의 프로필 정보와 관심 키워드를 수정하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test@email.com", required = true),
+            @Parameter(name = "password", description = "비밀번호를 작성하세요.", example = "password123", required = true),
+            @Parameter(name = "regionName", description = "지역명을 작성하세요.", example = "대전", required = true),
+            @Parameter(name = "nickname", description = "닉네임을 작성하세요.", example = "춘시기", required = true),
+            @Parameter(name = "favoriteKeywords", description = "관심 키워드를 작성하세요.", example = "날씨"),
+            @Parameter(name = "profileImage", description = "프로필 이미지 경로를 작성하세요.", example = "https:~~")
+    })
     @PostMapping("/update-my-info")
     public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal TokenUserInfo tokenUserInfo,
                                             @Validated @RequestPart("user") UserUpdateInfoRequestDTO dto,
@@ -247,7 +289,7 @@ public class UserController {
         // log.info("/issue-trend/update-my-info POST! - {}", dto);
         log.info("회원정보 변경 메서드 들어옴");
         log.info("tokenInfo: {} dto: {}", tokenUserInfo, dto);
-        log.info("profile_filename: {}", profileImage.getOriginalFilename());
+        // log.info("profile_filename: {}", profileImage.getOriginalFilename());
         ResponseEntity<FieldError> resultEntity = getFieldErrorResponseEntity(result);
         if (resultEntity != null) return resultEntity;
 
@@ -265,9 +307,6 @@ public class UserController {
             filePath = userService.uploadProfileImage(profileImage);
         }
         userService.updateMyInfo(email, newNick, newPw, newRegionName, newFavoriteKeywords, filePath);
-
-
-        //profileImage
 
         log.info("dto.getFavoriteKeywords(): {}", dto.getFavoriteKeywords());
         return ResponseEntity.ok().body("success");
@@ -296,6 +335,11 @@ public class UserController {
         }
         */
 
+    @Operation(summary = "로그아웃 요청 처리", description = "로그아웃을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "userNo", description = "로그아웃 할 회원의 회원번호를 작성하세요.", example = "41", required = true),
+            @Parameter(name = "email", description = "이메일을 작성하세요.", example = "test@email.com")
+    })
     @DeleteMapping("/delete")// /{userNo}
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
         // @PathVariable String userNo

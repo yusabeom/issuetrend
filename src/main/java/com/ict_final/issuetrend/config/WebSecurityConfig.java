@@ -64,9 +64,8 @@ public class WebSecurityConfig {
                             auth.requestMatchers("/issue-trend/password-check").authenticated();
                             auth.requestMatchers("/issue-trend/update-my-info").authenticated();
                             auth.requestMatchers("/issue-trend/delete").authenticated();
-                    auth.requestMatchers("/issue-trend/logout").authenticated();
-
-
+                            auth.requestMatchers("/issue-trend/logout").authenticated();
+                            auth.requestMatchers("/search-post-user").authenticated();
                             auth.anyRequest().authenticated(); // 그 외의 모든 요청은 인증 필요
                         }
 
