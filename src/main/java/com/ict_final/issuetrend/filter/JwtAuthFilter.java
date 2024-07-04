@@ -62,6 +62,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 && !requestURI.contains("/delete")
                 && !requestURI.contains("/logout")
                 && !requestURI.contains("/search-post-user")
+                && !requestURI.contains("/issue-trend/scrap")
+                && !requestURI.contains("/issue-trend/scrap/user")
+                && !requestURI.contains("/issue-trend/scrap/delete/{articleCode}")
                 ) {
             log.info("{}", isPermitAllUrl);
             filterChain.doFilter(request, response);
