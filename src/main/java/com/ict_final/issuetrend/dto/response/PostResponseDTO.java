@@ -49,10 +49,11 @@ public class PostResponseDTO {
             return email; // 유효한 이메일 형식이 아닌 경우
         }
         String username = parts[0];
-        if (username.length() <= 3) {
+        /*if (username.length() <= 3) {
             return username + "****";
         }
         String maskedUsername = username.substring(0, 3) + "****";
-        return maskedUsername;
+        return maskedUsername;*/
+        return username;
     }
 }
