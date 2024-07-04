@@ -1,6 +1,7 @@
 package com.ict_final.issuetrend.entity;
 
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -65,6 +66,7 @@ public class User {
     private boolean isSubscribed = false;
 
     @Column(length = 100)
+    @Nullable
     private String tid; // 카카오페이 결제 시 개인에게 부여되는 고유 번호
 
 

@@ -5,10 +5,8 @@ import com.ict_final.issuetrend.dto.response.NaverRestResponseDto;
 import com.ict_final.issuetrend.service.NaverService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 // 네이버 맛집 API
 @RestController
@@ -51,9 +48,9 @@ public class NaverRestaurantApi {
 
 
     }
- // 이미지 검색
- @Operation(summary = "네이버 이미지 검색", description = "검색 키워드에 따라 네이버 검색 엔진을 통해 이미지를 출력하는 메서드입니다.")
- @Parameter(name = "search", description = "검색 키워드(메뉴)를 작성하세요.", example = "냉면", required = true)
+     // 이미지 검색
+     @Operation(summary = "네이버 이미지 검색", description = "검색 키워드에 따라 네이버 검색 엔진을 통해 이미지를 출력하는 메서드입니다.")
+     @Parameter(name = "search", description = "검색 키워드(메뉴)를 작성하세요.", example = "냉면", required = true)
     @GetMapping("/image/{search}")
     private ResponseEntity<?> getImage(@PathVariable("search") String search) {
         log.info("/restaurant/image/{} - GET!", search);
@@ -72,5 +69,8 @@ public class NaverRestaurantApi {
         }
 
     }
+
+
+
 
 }
