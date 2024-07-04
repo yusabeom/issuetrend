@@ -24,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WeatherController {
 
+
     private final WeatherService weatherService;
 
     @Operation(summary = "날씨 데이터 조회", description = "지정된 좌표(nx, ny)에 대한 날씨 데이터 조회를 담당하는 메서드 입니다.")
