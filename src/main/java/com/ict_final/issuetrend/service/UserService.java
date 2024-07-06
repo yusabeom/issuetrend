@@ -137,6 +137,7 @@ public class UserService {
     private Map<String, String> getTokenMap(User user) {
         String accessToken = tokenProvider.createAccessKey(user);
         String refreshToken = tokenProvider.createRefreshKey(user);
+        log.info("access Token: {}, refresh Token: {}", accessToken, refreshToken);
 
         Map<String, String> token = new HashMap<>();
         token.put("access_token", accessToken);
@@ -147,7 +148,7 @@ public class UserService {
     public LoginResponseDTO kakaoService(String code) {
         // 인가 코드를 통해 토큰을 발급받기
         String accessToken = getKakaoAccessToken(code);
-        log.info("token: {}", accessToken);
+        log.info("kakao service token: {}", accessToken);
 
         // 토큰을 통해 사용자 정보를 가져오기
         KakaoUserDTO userDTO = getKakaoUserInfo(accessToken);
@@ -168,6 +169,11 @@ public class UserService {
 
         // 우리 사이트에서 사용하는 jwt를 생성.
         Map<String, String> token = getTokenMap(foundUser);
+        log.info("우리 사이트 jwt (Map): {}",token);
+
+        // 기존에 로그인했던 사용자의 refresh token값을 update
+        foundUser.changeRefreshToken(token.get("refresh_token"));
+        foundUser.changeRefreshExpiryDate(tokenProvider.getExpiryDate(token.get("refresh_token")));
 
         // 기존에 로그인했던 사용자의 access token값을 update
         foundUser.changeAccessToken(accessToken);
@@ -304,6 +310,7 @@ public class UserService {
     }
 
     public String renewalAccessToken(Map<String, String> tokenRequest) {
+        log.info("");
         String refreshToken = tokenRequest.get("refreshToken");
         boolean isValid = tokenProvider.validateRefreshToken(refreshToken);
         if (isValid) {
