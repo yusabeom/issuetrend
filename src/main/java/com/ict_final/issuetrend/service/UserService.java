@@ -38,8 +38,11 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.ict_final.issuetrend.util.ArticleSorter.sortArticlesByCreatedDate;
@@ -423,6 +426,7 @@ public class UserService {
     }
 
 
+    /*
     @Transactional
     public void updateMyInfo(String email, String newNick, String newPw, String newRegionName, List<String> newFavoriteKeywords, String filePath) {
         log.info("newFavoriteKeywords.toString(): {}", newFavoriteKeywords.toString());
@@ -460,9 +464,90 @@ public class UserService {
 
         userRepository.save(user);
     }
+    */
+
 
     public void deleteUser(TokenUserInfo tokenUserInfo) {
     User user = userRepository.findByEmail(tokenUserInfo.getEmail()).orElseThrow();
     userRepository.delete(user);
 }
+
+    public void updateMyInfo(String email, Map<String, Object> updateUserInfo, String filePath) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("회원이 아닙니다."));
+        // log.info("회원가입한 user의 정보: {}", user);
+        // log.info("리액트로부터 전달된 user의 정보: {}", updateUserInfo);
+
+        if (filePath != null) user.setProfileImage(filePath);
+
+
+        if ((updateUserInfo != null) && !updateUserInfo.isEmpty()) {
+            // Map<String, Object> updateEntries;
+            for (Map.Entry<String, Object> entry : updateUserInfo.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                switch (key) {
+                    case "nickname1":
+                        log.info("키는 nickname1 입니다. key: {}, value는 {}", key, value.toString());
+                        String nicNameValue = (String) value;
+                        user.setNickname(nicNameValue);
+                        break;
+
+                    case "password1":
+                        String rawPasswordValue = (String) value;
+                        String encoded = passwordEncoder.encode(rawPasswordValue);
+                        user.setPassword(encoded);
+                        break;
+
+                    case "regionName1":
+                        log.info("키는 regionName1 입니다. key: {}, value는 {}", key, value.toString());
+                        String regionNameValue = (String) value;
+                        user.setRegionName(regionNameValue);
+                        break;
+                    case "favoriteKeywords1":
+                        log.info("currentFavoriteKeyword: {}", value); // [rksk, 가나, rkskd, dfadf]
+
+                        // user에서 현재 Favorite Keywords 가져 오기
+                        List<FavoriteKeyword> existingKeywords = user.getFavoriteKeywords();
+
+                        // 변경하고자 하는 키워드 List로 형변환 하기
+                        List<String> newKeywords = (List<String>) value;
+
+                        Set<String> existingKeywordSet = existingKeywords.stream()
+                                .map(FavoriteKeyword::getFavoriteKeyword)
+                                .collect(Collectors.toSet());
+
+                        Set<String> newKeywordSet = new HashSet<>(newKeywords);
+
+                        // Determine keywords to add and remove
+                        Set<String> keywordsToAdd = new HashSet<>(newKeywordSet);
+                        keywordsToAdd.removeAll(existingKeywordSet);
+
+                        Set<String> keywordsToRemove = new HashSet<>(existingKeywordSet);
+                        keywordsToRemove.removeAll(newKeywordSet);
+
+                        // Remove keywords
+                        existingKeywords.removeIf(fk -> keywordsToRemove.contains(fk.getFavoriteKeyword()));
+                        favoriteKeywordRepository.deleteAll(existingKeywords.stream()
+                                .filter(fk -> keywordsToRemove.contains(fk.getFavoriteKeyword()))
+                                .collect(Collectors.toList()));
+
+                        for (String keyword : keywordsToAdd) {
+                            FavoriteKeyword favoriteKeyword = new FavoriteKeyword(keyword, user);
+                            existingKeywords.add(favoriteKeyword);
+                        }
+
+                        user.setFavoriteKeywords(existingKeywords);
+
+                        userRepository.save(user);
+
+                        break;
+                }
+        }
+        } else {
+            // 리액트로부터 업데이트할 정보를 받은 게 없음. 이미지 파일 제외하고,
+            System.out.println("리액트로부터 업데이트할 정보를 받은 게 없습니다.");
+        }
+
+    }
 }
