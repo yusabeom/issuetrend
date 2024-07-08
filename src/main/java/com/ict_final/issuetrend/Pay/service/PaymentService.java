@@ -31,6 +31,8 @@ public class PaymentService {
     @Value("${pay.admin-key}")
     private String kakaoApiKey;
 
+    private String baseURL = "";
+
     @Autowired
     private UserRepository userRepository;
 
