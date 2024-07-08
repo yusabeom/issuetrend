@@ -73,10 +73,12 @@ public class TokenProvider {
     }
 
     public String createAccessKey(User userEntity) {
-        return createToken(userEntity, SECRET_KEY, 3, ChronoUnit.MINUTES);
+        log.info("AccessKey 만들기");
+        return createToken(userEntity, SECRET_KEY, 1, ChronoUnit.MINUTES);
     }
 
     public String createRefreshKey(User userEntity) {
+        log.info("RefreshKey 만들기");
         return createToken(userEntity, REFRESH_SECRET_KEY, 30, ChronoUnit.DAYS);
     }
 

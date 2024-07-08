@@ -140,6 +140,7 @@ public class UserService {
     private Map<String, String> getTokenMap(User user) {
         String accessToken = tokenProvider.createAccessKey(user);
         String refreshToken = tokenProvider.createRefreshKey(user);
+        log.info("access Token: {}, refresh Token: {}", accessToken, refreshToken);
 
         Map<String, String> token = new HashMap<>();
         token.put("access_token", accessToken);
@@ -150,7 +151,7 @@ public class UserService {
     public LoginResponseDTO kakaoService(String code) {
         // 인가 코드를 통해 토큰을 발급받기
         String accessToken = getKakaoAccessToken(code);
-        log.info("token: {}", accessToken);
+        log.info("kakao service token: {}", accessToken);
 
         // 토큰을 통해 사용자 정보를 가져오기
         KakaoUserDTO userDTO = getKakaoUserInfo(accessToken);
@@ -171,6 +172,11 @@ public class UserService {
 
         // 우리 사이트에서 사용하는 jwt를 생성.
         Map<String, String> token = getTokenMap(foundUser);
+        log.info("우리 사이트 jwt (Map): {}",token);
+
+        // 기존에 로그인했던 사용자의 refresh token값을 update
+        foundUser.changeRefreshToken(token.get("refresh_token"));
+        foundUser.changeRefreshExpiryDate(tokenProvider.getExpiryDate(token.get("refresh_token")));
 
         // 기존에 로그인했던 사용자의 access token값을 update
         foundUser.changeAccessToken(accessToken);
@@ -236,6 +242,42 @@ public class UserService {
         // Object를 String으로 형 변환해서 리턴.
         return (String) responseData.get("access_token");
     }
+    public Map<String, Object> refreshAccessToken(String refreshToken) {
+        // 카카오 토큰 갱신 URI 설정
+        String requestURI = "https://kauth.kakao.com/oauth/token";
+
+        // 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // 요청 바디 설정
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", KAKAO_CLIENT_ID);
+        params.add("refresh_token", refreshToken);
+        params.add("client_secret", KAKAO_CLIENT_SECRET);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(params, headers);
+
+        // 카카오 서버로 POST 통신
+        RestTemplate template = new RestTemplate();
+
+
+        ResponseEntity<Map> responseEntity
+                = template.exchange(requestURI, HttpMethod.POST, requestEntity, Map.class);
+
+
+        Map<String, Object> responseData = (Map<String, Object>) responseEntity.getBody();
+        log.info("토큰 요청 응답 데이터: {}", responseData);
+
+
+        // 필요한 토큰 데이터만 추출하여 반환
+        Map<String, Object> tokenData = new HashMap<>();
+        tokenData.put("refresh_token", responseData.get("refresh_token"));
+        tokenData.put("refresh_token_expires_in", responseData.get("refresh_token_expires_in"));
+
+        return tokenData;
+    }
 
     public String logout(TokenUserInfo userInfo) {
         log.info("getemail: {}", userInfo.getUserNo());
@@ -271,6 +313,7 @@ public class UserService {
     }
 
     public String renewalAccessToken(Map<String, String> tokenRequest) {
+        log.info("");
         String refreshToken = tokenRequest.get("refreshToken");
         boolean isValid = tokenProvider.validateRefreshToken(refreshToken);
         if (isValid) {
