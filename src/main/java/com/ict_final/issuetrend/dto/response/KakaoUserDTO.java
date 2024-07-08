@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -48,6 +50,7 @@ public class KakaoUserDTO {
                 .profileImage(this.kakaoAccount.profile.profileImageUrl)
                 .regionName("서울")
                 .loginPath(LoginPath.KAKAO)
+                .favoriteKeywords(new ArrayList<>())
                 .accessToken(accessToken)
                 .build();
     }
