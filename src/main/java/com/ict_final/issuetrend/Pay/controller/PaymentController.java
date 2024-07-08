@@ -52,20 +52,20 @@ public class PaymentController {
             @RequestParam("pg_token") String pgToken) {
         log.info("userNo: {}, pgToken: {}", userNum, pgToken);
         paymentService.approvePayment(userNum, pgToken);
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/home")).build();
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://issuetrend.site/home")).build();
     }
 
     @Operation(summary = "결제 취소", description = "결제 취소를 담당하는 메서드 입니다.")
     @GetMapping("/cancel")
     public ResponseEntity<?> cancelPayment() {
         // 결제 취소 처리
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/home")).build();
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://issuetrend.site/home")).build();
     }
     @Operation(summary = "결제 실패", description = "결제 실패를 담당하는 메서드 입니다.")
     @GetMapping("/fail")
     public ResponseEntity<?> failPayment() {
         // 결제 실패 처리
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://localhost:3000/home")).build();
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("http://issuetrend.site/home")).build();
     }
 
     @Operation(summary = "구독 상태 조회", description = "구독 상태 조회를 담당하는 메서드 입니다.")
