@@ -86,7 +86,7 @@ public class UserController {
         if(userService.isMatch(userEmail, checkPw)) {
           return ResponseEntity.ok().body("비밀번호가 일치합니다.");
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
+            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
         }
     }
 
@@ -304,14 +304,11 @@ public class UserController {
     })
     @DeleteMapping("/delete")// /{userNo}
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal TokenUserInfo tokenUserInfo) {
-        // @PathVariable String userNo
         log.info("/delete 들어옴");
         log.info("tokenUserInfo.getUserNo(): {}", tokenUserInfo.getUserNo());
         // String userNo = tokenUserInfo.getUserNo();
         Long userNo = tokenUserInfo.getUserNo();
         userService.deleteUser(tokenUserInfo);
-
-
         return ResponseEntity.ok().body("SUCCESS");
     }
 
