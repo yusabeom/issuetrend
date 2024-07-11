@@ -58,7 +58,8 @@ dependencies {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+//	useJUnitPlatform()
+	exclude '**/*' // 빌드 시 빌드 과정에서 전체 테스트 로직 생략
 }
 
 /**

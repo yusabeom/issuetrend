@@ -54,9 +54,9 @@ public class PaymentService {
         params.put("total_amount", String.valueOf(requestDTO.getTotalAmount()));
         params.put("vat_amount", "0");
         params.put("tax_free_amount", "0");
-        params.put("approval_url", "http://13.209.56.91/payment/approve/"+requestDTO.getUserNo());
-        params.put("cancel_url", "http://13.209.56.91/payment/cancel");
-        params.put("fail_url", "http://13.209.56.91/payment/fail");
+        params.put("approval_url", "https://issuetrend.online/payment/approve/"+requestDTO.getUserNo());
+        params.put("cancel_url", "https://issuetrend.online/payment/cancel");
+        params.put("fail_url", "https://issuetrend.online/payment/fail");
 
         log.info("Request Parameters: {}", params);
 
