@@ -111,7 +111,7 @@ public class PaymentService {
         User user = userRepository.findByUserNo(userNo).orElseThrow();
         user.setSubscribed(true);
         userRepository.save(user);
-        return new PaymentApprovalResponseDTO(tid, "구독 서비스", 990);
+        return new PaymentApprovalResponseDTO(tid, "구독 서비스", 9900);
     }
 
 //    public PaymentApprovalResponseDTO subscribePayment(Long userNo) {
